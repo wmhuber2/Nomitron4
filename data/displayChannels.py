@@ -100,7 +100,7 @@ async def updatePlayer(self,pid):
                 self.Refs['players'][pid]: self.discord.PermissionOverwrite(read_messages=True),
             }
             channel = await self.server.create_text_channel(channelName, overwrites=overwrites, category= self.Refs['category']['Game-Data'])
-            self.Refs['channels'][channelName] = channel
+            self.Refs['channels'][channel.name] = channel
             self.Data['PlayerData'][pid]['Info-Channel'] = channel.name
 
             print('   |   Added Channel:', channel.name)
