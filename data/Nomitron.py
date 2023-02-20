@@ -351,10 +351,11 @@ class DiscordNomicBot():
                 try:   toDo.append(getattr(mod, function)(self, *payload_tmp))
                 except Exception as e: 
                     print(f'!!! Error In Module: {name} {function} {e}!!!')
-                    #raise e
+                    raise e
         try:await asyncio.gather( *toDo )
         except Exception as e: 
             print(f'!!! Error In Module: {name} {function} {e}!!!')
+            raise e
 
         
 
