@@ -136,7 +136,7 @@ class DiscordNomicBot():
         if 'Queue' not in self.Data:             self.Data['Queue']      = {}
         if 'Subers' not in self.Data:            self.Data['Subers']     = dict()
         for k in self.Data['Subers'].keys():
-            for m in self.Data['Subers'][k].keys():
+            for m in ['Assenter', 'Dissenter']:
                 if isinstance(self.Data['Subers'][k][m]['DOB'], int):
                     self.Data['Subers'][k][m]['DOB'] = datetime.datetime.fromtimestamp(self.Data['Subers'][k][m]['DOB'], pytz.timezone('US/Central'))
             
