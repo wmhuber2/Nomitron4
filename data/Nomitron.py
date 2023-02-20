@@ -146,11 +146,18 @@ class DiscordNomicBot():
             self.Data['CurrTurnStartTime'] = dayStart
         if 'NextTurnStartTime' not in self.Data:    
             self.Data['NextTurnStartTime'] = dayStart
+            
+        if isinstance(self.Data['CurrTurnStartTime'], int):
+            self.Data['CurrTurnStartTime'] = datetime.datetime.fromtimestamp(self.Data['CurrTurnStartTime'],tzinfo = pytz.timezone('US/Central'))
+        
+        if isinstance(self.Data['NextTurnStartTime'], int):
+            self.Data['NextTurnStartTime'] = datetime.datetime.fromtimestamp(self.Data['CurrTurnStartTime'],tzinfo = pytz.timezone('US/Central'))
+
     
         if 'Gladiator' not in self.Data: 
             self.Data['Gladiator'] = {
                 'Player': None, 
-                'DOB':self.now() - self.day
+                'DOB':0
             }
         if 'Critic' not in self.Data:
             self.Data['Critic'] = {
@@ -219,12 +226,24 @@ class DiscordNomicBot():
             if 'Supporters' not in self.Data['PlayerData'][pid]['Proposal'] or type(self.Data['PlayerData'][pid]['Proposal']['Supporters']) is type(set()):
                 self.Data['PlayerData'][pid]['Proposal']['Supporters'] = []
 
+
+
             if 'DOB'   not in self.Data['PlayerData'][pid]['Proposal']:
                 self.Data['PlayerData'][pid]['Proposal']['DOB'] = self.now()
+            
+            if isinstance(self.Data['PlayerData'][pid]['Proposal']['DOB'], int):
+                self.Data['PlayerData'][pid]['Proposal']['DOB'] = datetime.datetime.fromtimestamp(self.Data['PlayerData'][pid]['Proposal']['DOB'],tzinfo = pytz.timezone('US/Central'))
+
+
 
             if 'Color' not in self.Data['PlayerData'][pid]:
                 self.Data['PlayerData'][pid]['Color'] = {'Hue':"None", "time": self.now() - self.day}
+
+            if isinstance(self.Data['PlayerData'][pid]['Color']['time'], int):
+                self.Data['PlayerData'][pid]['Color']['time'] = datetime.datetime.fromtimestamp(self.Data['PlayerData'][pid]['Color']['time'],tzinfo = pytz.timezone('US/Central'))
+
             
+
             if 'Friendship Tokens' not in self.Data['PlayerData'][pid]:
                 self.Data['PlayerData'][pid]['Friendship Tokens'] = 0
         
