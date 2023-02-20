@@ -107,7 +107,7 @@ async def updatePlayer(self,pid):
       
 
     maxToDisplay = 25
-    ignoreKeys = ['Proposal', 'Info-Channel', 'InactiveWarned', 'query']
+    ignoreKeys = ['Proposal', 'Info-Channel', 'InactiveWarned', 'query', 'Query']
     paramMap = {
         'Time': "(HH:MM:SS)",
         'EmojiHold' : 'Emoji Hold',
@@ -189,7 +189,7 @@ async def updateData(self):
                   'Schedule-Channel-MSGS','Suber-Votes-1','Suber-Votes-2',
                   'Suber-Votes-3','Suber-Votes-4','Suber-Votes-5','Subers',
                   'Suber-MSG','Votes','Mood','Array','lastAlive','NextTurnStartTime',
-                  'CurrTurnStartTime']
+                  'CurrTurnStartTime','channels', 'admin','server']
     paramMap = {
         'TurnTime': 'Elasped Turn Time (sec)'
     }
@@ -209,7 +209,7 @@ async def updateData(self):
         msgs[k]  = f"**{name}**:   {val}"
         
         for pid in self.Data['PlayerData'].keys():
-            msgs[k] = msgs[k].replace(str(pid), self.Data['PlayerData'][pid]['Name']).replace('-05:51','')
+            msgs[k] = msgs[k].replace(str(pid), self.Data['PlayerData'][pid]['Name']).replace('-05:51','').replace('-06:00','')
 
     for k in sorted(msgs.keys()): toSend.append(msgs[k].strip())
 
