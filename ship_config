@@ -1,0 +1,9 @@
+active: 'False'
+autostart: false
+id: nomitron
+path: /home/wolfgang/Universe/WTW-Station/ships/Nomitron4/ship_config
+service: docker
+startARG: ''
+stopARG: ''
+tag: Nomitron
+time: 1621119988.5096443
