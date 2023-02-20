@@ -352,7 +352,10 @@ class DiscordNomicBot():
                 except Exception as e: 
                     print(f'!!! Error In Module: {name} {function} !!!')
                     #raise e
-        await asyncio.gather( *toDo )
+        try:await asyncio.gather( *toDo )
+        except Exception as e: 
+            print(f'!!! Error In Module: {name} {function} !!!')
+
         
 
 
