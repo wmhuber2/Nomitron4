@@ -135,6 +135,11 @@ class DiscordNomicBot():
         if 'VotingEnabled' not in self.Data:     self.Data['VotingEnabled'] = False
         if 'Queue' not in self.Data:             self.Data['Queue']      = {}
         if 'Subers' not in self.Data:            self.Data['Subers']     = dict()
+        for k in self.Data['Subers'].keys():
+            for m in self.Data['Subers'][k].keys():
+                if isinstance(self.Data['Subers'][k][m]['DOB'], int):
+                    self.Data['Subers'][k][m]['DOB'] = datetime.datetime.fromtimestamp(self.Data['Subers'][k][m]['DOB'], pytz.timezone('US/Central'))
+            
         if 'Array' not in self.Data:             self.Data['Array']      = dict()
         if 'Mood' not in self.Data:              self.Data['Mood']       = None
         if 'DeckMSGs' not in self.Data:          self.Data['DeckMSGs']   = []
