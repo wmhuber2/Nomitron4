@@ -136,6 +136,8 @@ async def updateProposal(self):
                 self.Data['Votes']['ProposingMSGs'].append([msg.id, line])
 
     for i in range(len(self.Data['Votes']['ProposingMSGs'])): 
+        if isinstance(self.Data['Votes']['ProposingMSGs'][i], int):
+            self.Data['Votes']['ProposingMSGs'][i] = [self.Data['Votes']['ProposingMSGs'][i], lines[i]]
         mid, line  = self.Data['Votes']['ProposingMSGs'][i] 
         if line != lines[i]:   
             print('   |   Editing Voting Proposal')
