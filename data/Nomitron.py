@@ -176,6 +176,12 @@ class DiscordNomicBot():
                 'Time':self.now() - self.day, 
                 'MSG': None
             }
+        if isinstance(self.Data['Wizard']['Time'], int):
+            self.Data['Wizard']['Time'] = datetime.datetime.fromtimestamp(self.Data['Wizard']['Time'], pytz.timezone('US/Central'))
+        if isinstance(self.Data['Wizard']['Time'], float):
+            self.Data['Wizard']['Time'] = datetime.datetime.fromtimestamp(self.Data['Wizard']['Time'], pytz.timezone('US/Central'))
+
+    
         if 'Buddies' not in self.Data:
             self.Data['Buddies'] = {
                 'Time Created': 1673244000, 
