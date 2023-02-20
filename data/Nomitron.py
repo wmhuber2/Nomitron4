@@ -148,10 +148,10 @@ class DiscordNomicBot():
             self.Data['NextTurnStartTime'] = dayStart
             
         if isinstance(self.Data['CurrTurnStartTime'], int):
-            self.Data['CurrTurnStartTime'] = datetime.datetime.fromtimestamp(self.Data['CurrTurnStartTime'],tzinfo = pytz.timezone('US/Central'))
+            self.Data['CurrTurnStartTime'] = datetime.datetime.fromtimestamp(self.Data['CurrTurnStartTime'], pytz.timezone('US/Central'))
         
         if isinstance(self.Data['NextTurnStartTime'], int):
-            self.Data['NextTurnStartTime'] = datetime.datetime.fromtimestamp(self.Data['CurrTurnStartTime'],tzinfo = pytz.timezone('US/Central'))
+            self.Data['NextTurnStartTime'] = datetime.datetime.fromtimestamp(self.Data['CurrTurnStartTime'], pytz.timezone('US/Central'))
 
     
         if 'Gladiator' not in self.Data: 
@@ -232,7 +232,7 @@ class DiscordNomicBot():
                 self.Data['PlayerData'][pid]['Proposal']['DOB'] = self.now()
             
             if isinstance(self.Data['PlayerData'][pid]['Proposal']['DOB'], int):
-                self.Data['PlayerData'][pid]['Proposal']['DOB'] = datetime.datetime.fromtimestamp(self.Data['PlayerData'][pid]['Proposal']['DOB'],tzinfo = pytz.timezone('US/Central'))
+                self.Data['PlayerData'][pid]['Proposal']['DOB'] = datetime.datetime.fromtimestamp(self.Data['PlayerData'][pid]['Proposal']['DOB'], pytz.timezone('US/Central'))
 
 
 
@@ -240,7 +240,7 @@ class DiscordNomicBot():
                 self.Data['PlayerData'][pid]['Color'] = {'Hue':"None", "time": self.now() - self.day}
 
             if isinstance(self.Data['PlayerData'][pid]['Color']['time'], int):
-                self.Data['PlayerData'][pid]['Color']['time'] = datetime.datetime.fromtimestamp(self.Data['PlayerData'][pid]['Color']['time'],tzinfo = pytz.timezone('US/Central'))
+                self.Data['PlayerData'][pid]['Color']['time'] = datetime.datetime.fromtimestamp(self.Data['PlayerData'][pid]['Color']['time'], pytz.timezone('US/Central'))
 
             
 
