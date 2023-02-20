@@ -91,8 +91,7 @@ async def updatePlayer(self,pid):
     channelName = self.Data['PlayerData'][pid].get('Info-Channel')
     if channelName is None or self.Refs['channels'].get(channelName) is None: 
         channelName = f"{self.Data['PlayerData'][pid]['Name'].lower()}-game-data".replace('#','-').replace(' ','-').replace('$','s')
-        self.Data['PlayerData'][pid]['Info-Channel'] = channelName
-
+        
         if self.Refs['channels'].get(channelName) is None:
             overwrites = {
                 self.Refs['roles'][self.moderatorRole]: self.discord.PermissionOverwrite(read_messages=True),
@@ -102,6 +101,8 @@ async def updatePlayer(self,pid):
             }
             channel = await self.server.create_text_channel(channelName, overwrites=overwrites, category= self.Refs['category']['Game-Data'])
             self.Refs['channels'][channelName] = channel
+            self.Data['PlayerData'][pid]['Info-Channel'] = channel.name
+
             print('   |   Added Channel:', channel.name)
     channel = self.Refs['channels'].get(channelName)
       
