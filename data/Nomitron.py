@@ -151,13 +151,13 @@ class DiscordNomicBot():
             self.Data['CurrTurnStartTime'] = datetime.datetime.fromtimestamp(self.Data['CurrTurnStartTime'], pytz.timezone('US/Central'))
         
         if isinstance(self.Data['NextTurnStartTime'], int):
-            self.Data['NextTurnStartTime'] = datetime.datetime.fromtimestamp(self.Data['CurrTurnStartTime'], pytz.timezone('US/Central'))
+            self.Data['NextTurnStartTime'] = datetime.datetime.fromtimestamp(self.Data['NextTurnStartTime'], pytz.timezone('US/Central'))
         
         if isinstance(self.Data['CurrTurnStartTime'], float):
             self.Data['CurrTurnStartTime'] = datetime.datetime.fromtimestamp(self.Data['CurrTurnStartTime'], pytz.timezone('US/Central'))
         
         if isinstance(self.Data['NextTurnStartTime'], float):
-            self.Data['NextTurnStartTime'] = datetime.datetime.fromtimestamp(self.Data['CurrTurnStartTime'], pytz.timezone('US/Central'))
+            self.Data['NextTurnStartTime'] = datetime.datetime.fromtimestamp(self.Data['NextTurnStartTime'], pytz.timezone('US/Central'))
 
     
         if 'Gladiator' not in self.Data: 
