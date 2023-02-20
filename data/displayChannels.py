@@ -90,7 +90,7 @@ async def updatePlayer(self,pid):
     channel = None
     channelName = self.Data['PlayerData'][pid].get('Info-Channel')
     if channelName is None or self.Refs['channels'].get(channelName) is None: 
-        channelName = f"{self.Data['PlayerData'][pid]['Name'].lower()}-game-data".replace('#','-').replace(' ','-').replace('$','S')
+        channelName = f"{self.Data['PlayerData'][pid]['Name'].lower()}-game-data".replace('#','-').replace(' ','-').replace('$','s')
         self.Data['PlayerData'][pid]['Info-Channel'] = channelName
 
         if self.Refs['channels'].get(channelName) is None:
