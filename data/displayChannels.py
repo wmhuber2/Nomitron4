@@ -46,6 +46,7 @@ async def updateSchedules(self,):
         overwrites = {
             self.Refs['roles'][self.playerRole]: self.discord.PermissionOverwrite(read_messages=True),
             self.server.default_role: self.discord.PermissionOverwrite(read_messages=False),
+            self.Refs['roles']['Bot']: self.discord.PermissionOverwrite(read_messages=True),
         }
         channel = await self.server.create_text_channel("schedule-info", overwrites=overwrites, category= self.Refs['category']['Game-Data'])
         self.Refs['channels'][channelName] = channel
@@ -95,6 +96,7 @@ async def updatePlayer(self,pid):
         if self.Refs['channels'].get(channelName) is None:
             overwrites = {
                 self.Refs['roles'][self.moderatorRole]: self.discord.PermissionOverwrite(read_messages=True),
+                self.Refs['roles']['Bot']: self.discord.PermissionOverwrite(read_messages=True),
                 self.server.default_role: self.discord.PermissionOverwrite(read_messages=False),
                 self.Refs['players'][pid]: self.discord.PermissionOverwrite(read_messages=True),
             }
@@ -174,6 +176,7 @@ async def updateData(self):
     if self.Refs['channels'].get(channelName) is None:         
         overwrites = {
             self.Refs['roles'][self.moderatorRole]: self.discord.PermissionOverwrite(read_messages=True),
+            self.Refs['roles']['Bot']: self.discord.PermissionOverwrite(read_messages=True),
             self.server.default_role: self.discord.PermissionOverwrite(read_messages=True)
         }
         channel = await self.server.create_text_channel(channelName, overwrites=overwrites, category= self.Refs['category']['Game-Data'])
