@@ -135,7 +135,7 @@ async def create_array(self):
             if len(msg.reactions) > 0:
                 for r in msg.reactions: await msg.remove_reaction(r , msg.author)
 
-    print('   |   Array Updated')
+    #print('   |   Array Updated')
     self.Data['Array'] = sortedArrays[::-1]
     return self.Data
 

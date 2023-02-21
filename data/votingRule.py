@@ -518,4 +518,4 @@ async def create_queue(self):
             elif      ('🥉' in list(map(str,msg.reactions))) and pid != self.Data['Queue'][2]:   await msg.clear_reaction('🥉') #3st
         
 
-    print('   |   Queue Updated')
+    #print('   |   Queue Updated')
