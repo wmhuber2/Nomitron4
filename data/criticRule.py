@@ -66,8 +66,9 @@ async def optOut(self, payload):
 Function Called on Reaction
 """
 async def on_reaction(self, payload):
-    if payload.get('user').id not in self.moderators: return
+    if self.Data['PlayerData'][payload.get('user').id]['Name'] not in self.moderators: return
     if payload['emoji'] == '✔️' and payload['Channel'] == 'critic-responses':
         print('   |   Starred')
+        if (payload['message'].author.id in self.Data['Critic']['Starred']): return
         self.Data['Critic']['Starred'].append(payload['message'].author.id)
         await self.Mods.suitsRule.rewardMethod(self,payload['message'].author.id, 'Next Big Sensation')
