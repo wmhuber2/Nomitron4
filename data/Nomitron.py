@@ -505,7 +505,7 @@ class DiscordNomicBot():
     Save Memory Data From File (Updated to Nomitron 4)
     """
     def saveData(self):
-        print('   -----SAVING-----')
+        #print('   -----SAVING-----')
         self.Data['lastAlive'] = datetime.datetime.now()
         if self.now() - self.lastSaveTime > datetime.timedelta(minutes=10):
             if os.path.isfile(path + savefile): copyfile(path + savefile, path + 'Backups/'+ savefile + '-' + str(datetime.datetime.now()))
