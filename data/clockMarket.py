@@ -17,6 +17,7 @@ async def invest(self,payload):
         await msg.channel.send("You do not have sufficient funds.")
     else:
         self.Data['PlayerData'][pid]['ClockMarket']['Ballance'] += amount
+        self.Data['PlayerData'][pid]['ClockMarket']['Invest Limit'] -= amount
         self.Data['PlayerData'][pid]['Friendship Tokens'] -= amount
         await msg.add_reaction('✔️')
     
@@ -72,3 +73,21 @@ async def stonks(self):
                 self.set_data(['PlayerData',pid,'ClockMarket','Ballance'], 
                 self.Data['PlayerData'][pid]['ClockMarket']['Ballance'] * multiplier)
             )
+            self.Tasks.add( 
+                self.set_data(['PlayerData',pid,'ClockMarket','Invest Limit'], 5)
+            )
+async def setInvestments(self, payload):
+    if payload.get('Author') not in self.moderators: return
+    
+    cont = payload['Content'].strip().split(' ')
+    if len(cont) == 3 : 
+        print('   |   Setting Investments')
+        playerid = payload['Content'].split(' ')[1]
+        player = await self.getPlayer(playerid, payload)
+        pid = player.id
+
+        toset = 0
+        try: toset = int(cont[2])
+        except ValueError: return
+        print("   |  ", toset)
+        self.Data['PlayerData'][pid]['ClockMarket']['Ballance'] = toset
