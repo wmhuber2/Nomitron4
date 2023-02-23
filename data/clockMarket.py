@@ -67,7 +67,7 @@ async def stonks(self):
                 'Invest Limit':5,
                 'Ballance':0,
             }
-        if self.Data['PlayerData'][pid]['ClockMarket']['Ballance'] != 0
+        if self.Data['PlayerData'][pid]['ClockMarket']['Ballance'] != 0:
             self.Tasks.add( 
                 self.set_data(['PlayerData',pid,'ClockMarket','Ballance'], 
                 self.Data['PlayerData'][pid]['ClockMarket']['Ballance'] * multiplier)
