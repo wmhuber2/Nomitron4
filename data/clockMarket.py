@@ -41,7 +41,7 @@ async def withdraw(self,payload):
     if   amount > self.Data['PlayerData'][pid]['ClockMarket']['Ballance']:
         await msg.channel.send("You do not have that amount invested.")
     elif   amount < 0:
-        await msg.channel.send("You cannot invest a negative amount.")
+        await msg.channel.send("You cannot withdraw a negative amount.")
     else:
         self.Data['PlayerData'][pid]['ClockMarket']['Ballance'] -= amount
         self.Data['PlayerData'][pid]['Friendship Tokens'] += amount
