@@ -26,6 +26,7 @@ async def startTurn(self):
     await self.Mods.coreMethods.rmJudge(self)
     await self.Mods.gladiatorRule.gladiatorPointCheck(self)
     await self.Mods.suitsRule.resetMethods(self)
+    await self.Mods.clockMarket.stonks(self)
     
 
 async def incrementTurn(self):

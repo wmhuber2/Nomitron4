@@ -5,7 +5,7 @@ async def makeActive(self,pid):
         self.Data['PlayerData'][pid]['Inactive'] = None    
 
 async def makeInactive(self,pid, reason = None):
-        await self.Refs['channels']['actions'].send("-  "+self.Data['PlayerData'][pid]['Name']+" Is Now Inctive")
+        await self.Refs['channels']['actions'].send("-  "+self.Data['PlayerData'][pid]['Name']+" Is Now Inactive")
         await self.Refs['players'][pid].add_roles(self.Refs['roles']['Inactive'])
         self.Data['PlayerData'][pid]['Inactive'] = reason    
 
