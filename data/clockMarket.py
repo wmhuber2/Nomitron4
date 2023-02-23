@@ -12,7 +12,9 @@ async def invest(self,payload):
         }
     
     if   amount > self.Data['PlayerData'][pid]['ClockMarket']['Invest Limit']:
-        await msg.channel.send("You cannot invest that amount this turn.")
+        await msg.channel.send("You cannot invest that amount this turn.") 
+    elif   amount < 0:
+        await msg.channel.send("You cannot invest a negative amount.")
     elif amount > self.Data['PlayerData'][pid]['Friendship Tokens']:
         await msg.channel.send("You do not have sufficient funds.")
     else:
@@ -38,6 +40,8 @@ async def withdraw(self,payload):
     
     if   amount > self.Data['PlayerData'][pid]['ClockMarket']['Ballance']:
         await msg.channel.send("You do not have that amount invested.")
+    elif   amount < 0:
+        await msg.channel.send("You cannot invest a negative amount.")
     else:
         self.Data['PlayerData'][pid]['ClockMarket']['Ballance'] -= amount
         self.Data['PlayerData'][pid]['Friendship Tokens'] += amount
@@ -76,6 +80,7 @@ async def stonks(self):
             self.Tasks.add( 
                 self.set_data(['PlayerData',pid,'ClockMarket','Invest Limit'], 5)
             )
+
 async def setInvestments(self, payload):
     if payload.get('Author') not in self.moderators: return
     
