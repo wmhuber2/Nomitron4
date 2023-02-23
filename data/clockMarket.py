@@ -11,7 +11,7 @@ async def invest(self,payload):
             'Ballance':0,
         }
     
-    if   amount > self.Data['PlayerData'][pid]['ClockMarket']['Ballance']:
+    if   amount > self.Data['PlayerData'][pid]['ClockMarket']['Invest Limit']:
         await msg.channel.send("You cannot invest that amount this turn.")
     elif amount > self.Data['PlayerData'][pid]['Friendship Tokens']:
         await msg.channel.send("You do not have sufficient funds.")
