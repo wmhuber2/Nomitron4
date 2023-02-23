@@ -96,3 +96,19 @@ async def setInvestments(self, payload):
         except ValueError: return
         print("   |  ", toset)
         self.Data['PlayerData'][pid]['ClockMarket']['Ballance'] = toset
+
+async def setInvestmentLimit(self, payload):
+    if payload.get('Author') not in self.moderators: return
+    
+    cont = payload['Content'].strip().split(' ')
+    if len(cont) == 3 : 
+        print('   |   Setting Invest Limit')
+        playerid = payload['Content'].split(' ')[1]
+        player = await self.getPlayer(playerid, payload)
+        pid = player.id
+
+        toset = 0
+        try: toset = int(cont[2])
+        except ValueError: return
+        print("   |  ", toset)
+        self.Data['PlayerData'][pid]['ClockMarket']['Invest Limit'] = toset
