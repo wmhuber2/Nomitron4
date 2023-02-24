@@ -257,9 +257,9 @@ async def rmSuber(self, payload):
 
     
     k = int(argv[-1])
-    if k in self.Data['Suber']:
+    if k in self.Data['Subers']:
         print('   |   Removing Suber', k)
-        del self.Data['Suber'][k]
+        del self.Data['Subers'][k]
 
             
 
