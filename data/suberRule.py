@@ -255,12 +255,12 @@ async def rmSuber(self, payload):
     argv = payload['Content'].split(' ')
     pid  = payload['Author ID']
 
-    try:
-        k = int(argv[-1])
-        if k in self.Data['Suber']:
-            print('   |   Removing Suber', k)
-            del self.Data['Suber'][k]
-    except: pass
+    
+    k = int(argv[-1])
+    if k in self.Data['Suber']:
+        print('   |   Removing Suber', k)
+        del self.Data['Suber'][k]
+
             
 
 # schedule
