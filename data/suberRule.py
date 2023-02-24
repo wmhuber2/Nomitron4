@@ -250,7 +250,17 @@ async def popSuber(self): # (Done
     for key in votesCopy.keys():
         self.Tasks.add( self.set_data([key,], votesCopy[key]) )
 
-                
+async def rmSuber(self, payload):
+    if payload.get('Author') not in self.moderators: return
+    argv = payload['Content'].split(' ')
+    pid  = payload['Author ID']
+
+    try:
+        k = int(argv[-1])
+        if k in self.Data['Suber']:
+            print('   |   Removing Suber', k)
+            del self.Data['Suber'][k]
+            
 
 # schedule
 async def suber_tally(self): #( Done )
