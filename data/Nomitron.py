@@ -297,6 +297,7 @@ class DiscordNomicBot():
 
             if isinstance(self.Data['PlayerData'][pid]['Emojis'] , str):
                 self.Data['PlayerData'][pid]['Emojis'] = list(self.Data['PlayerData'][pid]['Emojis'] )
+        
         for pid in self.Data['PlayerData'].keys():
             if pid not in self.Refs['players']:
                 print('Delete', Data['PlayerData'][pid]['Name'])
@@ -392,7 +393,7 @@ class DiscordNomicBot():
 
         for role in await self.server.fetch_roles():
             self.Refs['roles'][role.name] = role
-        for member in self.server.members:
+        for member in self.Refs['roles'][self.playerRole].members:
             self.Refs['players'][member.id] = member
         for channel in await self.server.fetch_channels():
             if str(channel.type) == 'category':  self.Refs['category'][channel.name]= channel
