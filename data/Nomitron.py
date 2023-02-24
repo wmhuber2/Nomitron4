@@ -300,7 +300,7 @@ class DiscordNomicBot():
         
         for pid in self.Data['PlayerData'].keys():
             if pid not in self.Refs['players']:
-                print('Delete', Data['PlayerData'][pid]['Name'])
+                print('Delete', self.Data['PlayerData'][pid]['Name'])
         print('   Players In Game:',len(self.Data['PlayerData']))
 
 
