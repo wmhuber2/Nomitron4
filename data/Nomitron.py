@@ -297,7 +297,9 @@ class DiscordNomicBot():
 
             if isinstance(self.Data['PlayerData'][pid]['Emojis'] , str):
                 self.Data['PlayerData'][pid]['Emojis'] = list(self.Data['PlayerData'][pid]['Emojis'] )
-
+        for pid in self.Data['PlayerData'].keys():
+            if pid not in self.Refs['players']:
+                print('Delete', Data['PlayerData'][pid]['Name'])
         print('   Players In Game:',len(self.Data['PlayerData']))
 
 
@@ -447,6 +449,7 @@ class DiscordNomicBot():
             functionName = payload['Content'][1:].split(' ')[0]
             await self.passToModule(functionName, payload)
             await self.runTasks()
+            self.send(self.Refs['channels'].get('actions-log'), f"{payload['Author']} - {payload['Content']}")
         elif len(payload['Content']) > 0:
             await self.passToModule('on_message', payload)
             await self.runTasks()
@@ -561,6 +564,7 @@ class DiscordNomicBot():
     Send Long Messages to a channel.
     """
     async def send(self, target, content):
+        if target is None: return
         isDM = isinstance(target, self.discord.User) or isinstance(target, self.discord.Member)
         msg = ""
         for line in content.split('\n'):
