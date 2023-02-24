@@ -298,7 +298,7 @@ class DiscordNomicBot():
             if isinstance(self.Data['PlayerData'][pid]['Emojis'] , str):
                 self.Data['PlayerData'][pid]['Emojis'] = list(self.Data['PlayerData'][pid]['Emojis'] )
         
-        for pid in self.Data['PlayerData'].keys():
+        for pid in list(self.Data['PlayerData'].keys()):
             if pid not in self.Refs['players']:
                 print('Delete', self.Data['PlayerData'][pid]['Name'])
                 del self.Data['PlayerData'][pid]
