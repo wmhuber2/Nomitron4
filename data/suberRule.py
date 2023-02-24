@@ -260,6 +260,7 @@ async def rmSuber(self, payload):
         if k in self.Data['Suber']:
             print('   |   Removing Suber', k)
             del self.Data['Suber'][k]
+    except: pass
             
 
 # schedule
