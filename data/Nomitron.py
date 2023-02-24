@@ -451,7 +451,7 @@ class DiscordNomicBot():
             functionName = payload['Content'][1:].split(' ')[0]
             await self.passToModule(functionName, payload)
             await self.runTasks()
-            self.send(self.Refs['channels'].get('actions-log'), f"{payload['Author']} - {payload['Content']}")
+            await self.send(self.Refs['channels'].get('actions-log'), f"{payload['Author']} - {payload['Content']}")
         elif len(payload['Content']) > 0:
             await self.passToModule('on_message', payload)
             await self.runTasks()
