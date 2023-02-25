@@ -1,5 +1,5 @@
 import random
-import numpy as np
+import numpy 
 async def invest(self,payload):
     argv = payload['Content'].split(' ')
     pid = payload['Author ID']
