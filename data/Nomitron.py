@@ -359,13 +359,13 @@ class DiscordNomicBot():
             if hasattr(mod, function):
                 try:   toDo.append(getattr(mod, function)(self, *payload_tmp))
                 except self.discord.errors.HTTPException: 
-                    print(f'!!! Error In Module: {name} {function} {e}!!!')
+                    print(f'!!! HTTP Error In Module: {name} {function}!!!')
                 except Exception as e: 
                     print(f'!!! Error In Module: {name} {function} {e}!!!')
                     raise e
         try:await asyncio.gather( *toDo )
         except self.discord.errors.HTTPException: 
-            print(f'!!! Error In Module: {name} {function} {e}!!!')
+            print(f'!!! HTTP Error In Module: {name} {function}!!!')
         except Exception as e: 
             print(f'!!! Error In Module: {name} {function} {e}!!!')
             raise e
