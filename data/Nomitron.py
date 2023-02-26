@@ -22,7 +22,7 @@ BotChannels = ['market', 'actions','off-topic', 'courtroom', 'critic-responses',
                'voting','voting-1','voting-2','voting-3','voting-4',
                'proposals', 'suber-proposals','mod-lounge', 'bot-spam',
                'deck-edits', 'queue', 'DM', 'game', 'combat']
-
+dontLogFunc = ['sudo', 'sudont','f','r','find','rule','ping']
 '''
 Implement Modules By Placing Module Python File In Same Directory
 Modules Must Have Different Names And Be Written With Python 3 Compatibility.
@@ -358,10 +358,14 @@ class DiscordNomicBot():
             mod = getattr(self.Mods, name)
             if hasattr(mod, function):
                 try:   toDo.append(getattr(mod, function)(self, *payload_tmp))
+                except self.discord.errors.HTTPException: 
+                    print(f'!!! Error In Module: {name} {function} {e}!!!')
                 except Exception as e: 
                     print(f'!!! Error In Module: {name} {function} {e}!!!')
                     raise e
         try:await asyncio.gather( *toDo )
+        except self.discord.errors.HTTPException: p
+            print(f'!!! Error In Module: {name} {function} {e}!!!')ass
         except Exception as e: 
             print(f'!!! Error In Module: {name} {function} {e}!!!')
             raise e
@@ -451,7 +455,8 @@ class DiscordNomicBot():
             functionName = payload['Content'][1:].split(' ')[0]
             await self.passToModule(functionName, payload)
             await self.runTasks()
-            await self.send(self.Refs['channels'].get('actions-log'), f"{payload['Author']} - {payload['Content']}")
+            if functionName not in dontLogFunc:
+                await self.send(self.Refs['channels'].get('actions-log'), f"{payload['Author']} - {payload['Content']}")
         elif len(payload['Content']) > 0:
             await self.passToModule('on_message', payload)
             await self.runTasks()
