@@ -48,7 +48,7 @@ async def togglePermInactive(self, payload):
     isInactive = self.Refs['players'][pid].get_role(self.Refs['roles']['Inactive'].id) is not None
 
     if isInactive: await makeActive(self, pid)
-    else: await makeInctive(self, pid, "Perm")
+    else: await makeInactive(self, pid, "Perm")
 
 async def update(self):
     endorsingPlayers = set()
