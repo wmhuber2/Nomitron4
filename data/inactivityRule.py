@@ -22,7 +22,7 @@ async def attemptActivate(self,pid):
 
 async def activateOnEndorse(self, pid):
     isInactive = self.Refs['players'][pid].get_role(self.Refs['roles']['Inactive'].id) is not None
-    if isInactive and self.Data['PlayerData'][pid]['Inactive'] not in [None,'','315']:    await makeActive(self, pid)
+    if isInactive and self.Data['PlayerData'][pid]['Inactive'] in [None,'','315']:    await makeActive(self, pid)
 
 async def activeOnVote(self, pid):
     isInactive = self.Refs['players'][pid].get_role(self.Refs['roles']['Inactive'].id) is not None
