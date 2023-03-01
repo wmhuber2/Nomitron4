@@ -54,7 +54,7 @@ async def challenge(self, payload):
 
         print("   |   New Gladiator:",gldetr.nick,"->", player.nick)
         self.Data['Gladiator'] = {'Player': pid, 'DOB':self.Data['Turn']+1}
-        await updateEmojis(Data, payload,)
+        await self.Mods.emojiRule.updateEmojis(self)
     else: 
         await message.channel.send(f"-  Gladiator: {gladiatorRoll}\nPlayer {playerRoll}\n{payload['Author']} Is Defeated")
 

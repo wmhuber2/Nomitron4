@@ -38,8 +38,11 @@ async def activeOnVote(self, pid):
 async def togglePermInactive(self, payload):
     if payload.get('Author') not in self.moderators: return 
 
+    reason = "Mods"
     playerid = payload['Content'].split(' ')[1]
-    player = await self.getPlayer(playerid)
+    if len(payload['Content'].split(' ')) > 2:
+        reason = ' '.join(payload['Content'].split(' ')[2:])
+    player = await self.getPlayer(playerid, payload)
     pid = player.id
 
     isInactive = self.Refs['players'][pid].get_role(self.Refs['roles']['Inactive'].id) is not None
