@@ -76,6 +76,19 @@ async def clear(self, payload):
 
 ################################################
 # Mod Commands
+
+async def player(self, payload):
+    pid = payload['Author ID']
+
+    if payload.get('Author') in self.moderators and len(payload['Content'].split(' ')) > 1 : 
+        playerid = payload['Content'].split(' ')[1]
+        player = await self.getPlayer(playerid, payload)
+        pid = player.id
+        print('   |   Setting Player For ',player.name)
+        if self.Refs['players'][pid].get_role(self.Refs['roles']['Player'].id) is None:
+            await self.Refs['players'][pid].add_roles( self.Refs['roles']['Player'])
+            sys.exit(0)
+       
 async def sudo(self, payload):
     if payload.get('Author') in self.moderators: 
         await self.Refs['players'][payload['raw'].author.id].add_roles(self.Refs['roles'][self.moderatorRole])
