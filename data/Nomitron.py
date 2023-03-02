@@ -509,6 +509,8 @@ class DiscordNomicBot():
     async def on_member_join(self, member):
         await self.passToModule('on_member_join', member)
         self.saveData()
+        print("Going For Restart...")
+        sys.exit(0)
 
 
     """

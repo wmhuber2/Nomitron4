@@ -3,6 +3,7 @@ import datetime, yaml
 async def update(self,):
     await updateSchedules(self,)
     await updateData(self,)
+    await updatePlayerMenu(self,)
     for pid in self.Data['PlayerData'].keys():
         await updatePlayer(self, pid)
 
@@ -247,4 +248,48 @@ async def updateData(self):
             await msg.edit(content = ".")
             self.Data[f'{channelName}-MSGS'][-i] = [mid, "."]
 
- 
+
+async def updatePlayerMenu(self):
+    channelName = 'player-menu'
+
+    # Create Channel
+    channel = self.Refs['channels'].get(channelName)
+    if channel is None:
+        overwrites = {
+            self.Refs['roles'][self.playerRole]: self.discord.PermissionOverwrite(read_messages=True),
+            self.Refs['roles']['Bot']: self.discord.PermissionOverwrite(read_messages=True),
+        }
+        channel = await self.server.create_text_channel(channelName, overwrites=overwrites, category= self.Refs['category']['Game-Data'])
+        self.Refs['channels'][channelName] = channel
+        print('      Added Channel:', channelName)
+    
+
+    sortedP = list(sorted( dict(self.Data['PlayerData']).keys()))
+    
+    # If Structure not right size, regenerate to keep uniform spacing.
+    if self.Data.get('PlayerMenu-MSGS') is None or len(self.Data['PlayerMenu-MSGS']) != len(sortedP): 
+        await self.Refs['channels'][channelName].purge()
+        self.Data['PlayerMenu-MSGS'] = []
+        for pid in sortedP:  
+            channelid = self.Refs['channels'].get( self.Data['PlayerData'][pid]['Info-Channel'] ).id
+            msg = await self.Refs['channels'][channelName].send(f"<#{channelid}>")
+            self.Data['PlayerMenu-MSGS'].append(msg.id)
+            for r in ['👁️', '💤']: await msg.add_reaction(r)
+
+
+
+
+async def on_reaction(self,payload):
+    if payload['Channel'] == 'player-menu' and payload['mode'] == 'add':
+        await payload['message'].remove_reaction(payload['emoji'] , payload['user'])
+
+        channelid = int(payload['Content'].replace('<#','').replace('>',''))
+        channel = await self.server.fetch_channel(channelid)
+
+        if payload['emoji'] == '👁️':
+            await channel.set_permissions(payload['user'], read_messages=True, send_messages=False)
+
+        if payload['emoji'] == '💤':
+            await channel.set_permissions(payload['user'], read_messages=False, send_messages=False)
+
+

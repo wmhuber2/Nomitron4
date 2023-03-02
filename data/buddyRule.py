@@ -24,8 +24,9 @@ async def tally_buds(self):
             if isGreen == baseIsGreen and isOrange == baseIsOrange and isPurple == baseIsPurple: pass
             else: allSame = False
         if allSame:
-            for b in bud: self.Data['PlayerData'][b]['Friendship Tokens'] += 1
-            self.Tasks.add( self.Mods.suitsRule.rewardMethod(self, b, 'Buddy') )
+            for b in bud: 
+                self.Data['PlayerData'][b]['Friendship Tokens'] += 1
+                self.Tasks.add( self.Mods.suitsRule.rewardMethod(self, b, 'Buddy') )
 
 # Weekly Schedule
 async def buddify(self):
