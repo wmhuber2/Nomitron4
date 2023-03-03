@@ -3,9 +3,10 @@ import datetime, yaml
 async def update(self,):
     await updateSchedules(self,)
     await updateData(self,)
-    await updatePlayerMenu(self,)
     for pid in self.Data['PlayerData'].keys():
         await updatePlayer(self, pid)
+    
+    await updatePlayerMenu(self,)
 
 async def updateSchedules(self,):
     channelName = 'schedule-info'
