@@ -17,6 +17,9 @@ async def toggleEmoji(self, payload):
         elif emoji in self.Data['PlayerData'][pid]['Emojis']:
             await removeEmoji(self, pid, emoji)
 
+async def update(self):
+    await updateEmojis(self)
+
 # Command
 async def nick(self, payload):
     print('   |  Setting Nick')

@@ -162,9 +162,11 @@ async def suberTick(self): # ( Done )
                 arrayMajorMinors = list(self.Data['Subers'][suberKey][majority]['Whip'])
                 arrayMajorMinors.sort(key=keySortSub)
                 print(arrayMajorMinors)
-                if len(arrayMajorMinors) > 0 and self.Data['Subers'][suberKey][minority]['Is Official'] and \
-                len(arrayMajorMinors[0]['Supporters']) >  len(self.Data['Subers'][suberKey][majority]["Members"])*0.5 and \
-                (len(arrayMajorMinors) == 1 or len(arrayMajorMinors[0]['Supporters']) != len(arrayMajorMinors[1]['Supporters'])):
+                
+                if  len(arrayMajorMinors) > 0 and \
+                    self.Data['Subers'][suberKey][minority]['Is Official'] and \
+                    len(arrayMajorMinors[0]['Supporters']) >  len(self.Data['Subers'][suberKey][majority]["Members"])*0.5 and \
+                    (len(arrayMajorMinors) == 1 or len(arrayMajorMinors[0]['Supporters']) != len(arrayMajorMinors[1]['Supporters'])):
                     self.Tasks.update(set([
                         self.set_data(['Subers',suberKey,majority,'Whip'], arrayMajorMinors[0]['Name']),
                         self.set_data(['Subers',suberKey,majority,'Is Official'], True),
@@ -177,24 +179,24 @@ async def suberTick(self): # ( Done )
             if not self.Data['Subers'][suberKey][minority]['Is Official']:
                 arrayMajorMinors = list(sorted( self.Data['Subers'][suberKey][minority]['Whip'], key=keySortSub))
 
-                # If No Whip Consensis Vote
-                if len(arrayMajorMinors) == 0 or (len(arrayMajorMinors) != 1 and \
-                len(arrayMajorMinors[0]['Supporters']) <=  len(self.Data['Subers'][suberKey][minority]['Members'])*0.5 and \
-                len(arrayMajorMinors[0]['Supporters']) == len(arrayMajorMinors[1]['Supporters'])):
-                    cont = f"Proposal {suberKey}'s SUBER: Disbanded Due To Failed Majority Vote of Minority Whip" 
-                    await self.Refs['channels']['actions'].send(cont)
-                    del self.Data['Subers'][suberKey]
-                    continue
-
                 # Set Whip Minority
-                else:
+                if  len(arrayMajorMinors) > 0 and \
+                    len(arrayMajorMinors[0]['Supporters']) >  len(self.Data['Subers'][suberKey][minority]["Members"])*0.5 and \
+                    (len(arrayMajorMinors) == 1 or len(arrayMajorMinors[0]['Supporters']) != len(arrayMajorMinors[1]['Supporters'])):
                     self.Tasks.update(set([
                         self.set_data(['Subers',suberKey,minority,'Whip'], arrayMajorMinors[0]['Name']),
                         self.set_data(['Subers',suberKey,minority,'Is Official'], True)
                     ]))
                     cont = f"Proposal {suberKey}'s SUBER: {self.Data['PlayerData'][arrayMajorMinors[0]['Name']]['Name']} has been elected as a Whip." 
                     await self.Refs['channels']['actions'].send(cont)
-                
+
+                else:
+                    cont = f"Proposal {suberKey}'s SUBER: Disbanded Due To Failed Majority Vote of Minority Whip" 
+                    await self.Refs['channels']['actions'].send(cont)
+                    del self.Data['Subers'][suberKey]
+                    continue
+
+               
 
         # Week Expiration Test
         if (self.Data['Day'] - self.Data['Subers'][suberKey]['Date']) > 7:

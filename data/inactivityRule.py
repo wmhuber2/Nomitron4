@@ -65,11 +65,11 @@ async def update(self):
             self.Data['PlayerData'][player]['Will Become Inactivie At'] = self.Data['Time'] + self.hour*36
             await self.dm(pid,"You will be Inactive in 36 hrs because you are not endorsing any proposals. Endorse a proposal or create one to become active again. (Rule 315)")
         
-        if player not in endorsingPlayers and willBeInactive < self.Data['Time']:
+        elif player not in endorsingPlayers and willBeInactive is not None and willBeInactive < self.Data['Time']:
             await makeInactive(self,player,"315")
             self.Data['PlayerData'][player]['Will Become Inactivie At'] = None
 
-        if isInactive and self.Data['PlayerData'][player]['Inactive'] == "315" and player in endorsingPlayers:
+        elif isInactive and self.Data['PlayerData'][player]['Inactive'] == "315" and player in endorsingPlayers:
             print(f'   |   - Making {player} active')
             self.Data['PlayerData'][player]['Will Become Inactivie At'] = None
             await makeActive(self,player)

@@ -110,7 +110,7 @@ async def updatePlayer(self,pid):
       
 
     maxToDisplay = 25
-    ignoreKeys = ['Proposal', 'Info-Channel', 'InactiveWarned', 'query', 'Query']
+    ignoreKeys = ['Proposal', 'Info-Channel', 'InactiveWarned', 'query', 'Query', 'Rock Paper Scissor Guess']
     paramMap = {
         'Time': "(HH:MM:SS)",
         'EmojiHold' : 'Emoji Hold',
@@ -192,7 +192,8 @@ async def updateData(self):
                   'Schedule-Channel-MSGS','Suber-Votes-1','Suber-Votes-2',
                   'Suber-Votes-3','Suber-Votes-4','Suber-Votes-5','Subers',
                   'Suber-MSG','Votes','Mood','Array','lastAlive','NextTurnStartTime',
-                  'CurrTurnStartTime','channels', 'admin','server']
+                  'CurrTurnStartTime','channels', 'admin','server',
+                  'Turn -3 RPS Winners','Turn -2 RPS Winners','Turn -1 RPS Winners']
     paramMap = {
         'TurnTime': 'Elasped Turn Time (sec)'
     }

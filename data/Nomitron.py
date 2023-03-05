@@ -316,14 +316,12 @@ class DiscordNomicBot():
 
         payload['Author'] = message.author.name + "#" + str(message.author.discriminator)
         payload['Author ID'] = message.author.id
-        payload['Nickname'] = message.author.nick
         payload['Channel Type'] = message.channel.type
         
         if payload['Channel Type'] in [self.discord.ChannelType.private, self.discord.ChannelType.group]:
             payload['Channel'] = "DM"
             payload['Category'] = "DM"
         else:
-            payload['Nickname'] = message.author.nick
             payload['Channel'] = message.channel.name
 
         payload['Content'] = message.system_content.strip().replace('  ',' ')
@@ -526,7 +524,7 @@ class DiscordNomicBot():
 
         list_of_files = glob.glob(path + 'Backups/*')
         sorted(list_of_files, key=os.path.getctime)
-        for full_path in list_of_files[max([100 - len(list_of_files), -1]): ]:
+        for full_path in list_of_files[max([1000 - len(list_of_files), -1]): ]:
             print('   Removing:',full_path.split('/')[-1])
             os.remove(full_path)
         

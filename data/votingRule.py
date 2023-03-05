@@ -281,7 +281,7 @@ async def removeProposal(self, payload):
 # command (Done)
 async def setProposalNumber(self, payload):
     if payload.get('Author') not in self.moderators: return
-    try: self.Data['Proposal#'] = int(text[0][1])
+    try: self.Data['Proposal#'] = int(payload['Content'].split(' ')[1])
     except Exception as e: print(e)
     await payload['raw'].channel.send(f"Set Proposal Number to {self.Data['Proposal#']}")
  
