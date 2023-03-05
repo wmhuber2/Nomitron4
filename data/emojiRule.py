@@ -29,7 +29,7 @@ async def nick(self, payload):
 
 # Function
 async def updateEmojis(self):
-    print('   |  Updating Emojis')
+    #print('   |  Updating Emojis')
     for pid in self.Data['PlayerData'].keys():
         player = self.Refs['players'][pid]
         emojis = ''.join(sorted(self.Data['PlayerData'][pid]['Emojis'])).replace(' ','')
