@@ -443,19 +443,19 @@ class DiscordNomicBot():
         if self.Refs['players'][message.author.id].get_role(self.Refs['roles'][self.playerRole].id) is None: return
 
         payload = self.messageAsPayload(message)
-        print('   MSG--', payload['Content'], '-----')
         if payload['Channel'] not in self.BotChannels: return
 
         found = None
         if self.isholiday and payload.get('Author') not in self.moderators: return
         while self.lock: await asyncio.sleep(1)
         if len(payload['Content']) > 0 and payload['Content'][0][0] == botCommandChar:
+            print('   MSG--', payload['Content'], '-----')
             functionName = payload['Content'][1:].split(' ')[0]
             await self.passToModule(functionName, payload)
             await self.runTasks()
             if functionName not in dontLogFunc:
                 await self.send(self.Refs['channels'].get('actions-log'), f"{payload['Author']} - {payload['Content']}")
-        elif len(payload['Content']) > 0:
+        elif len(payload['Content']) > 0 or len(payload['Attachments']) > 0:
             await self.passToModule('on_message', payload)
             await self.runTasks()
         
