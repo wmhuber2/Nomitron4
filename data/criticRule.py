@@ -69,6 +69,7 @@ async def on_reaction(self, payload):
     if self.Data['PlayerData'][payload.get('user').id]['Name'] not in self.moderators: return
     if payload['emoji'] == '✔️' and payload['Channel'] == 'critic-responses':
         print('   |   Starred')
-        await self.Mods.suitsRule.rewardMethod(self,payload['message'].author.id, 'Next Big Sensation')
         if (payload['message'].author.id in self.Data['Critic']['Starred']): return
         self.Data['Critic']['Starred'].append(payload['message'].author.id)
+        await self.Mods.suitsRule.rewardMethod(self,payload['message'].author.id, 'Next Big Sensation')
+        

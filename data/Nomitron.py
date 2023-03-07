@@ -455,11 +455,11 @@ class DiscordNomicBot():
             await self.runTasks()
             if functionName not in dontLogFunc:
                 await self.send(self.Refs['channels'].get('actions-log'), f"{payload['Author']} - {payload['Content']}")
+            print('   --------------------------------')
         elif len(payload['Content']) > 0 or len(payload['Attachments']) > 0:
             await self.passToModule('on_message', payload)
             await self.runTasks()
         
-        print('   --------------------------------')
         self.saveData()
 
 
