@@ -429,8 +429,10 @@ class DiscordNomicBot():
             self.Data['Time'] = self.now()
             self.Data['lastAlive'] = datetime.datetime.now()
 
-            await self.passToModule('update')
-            await self.runTasks()
+            try: await self.passToModule('update')
+            except Exception as e: print('ERROR:', e)
+            try:await self.runTasks()
+            except Exception as e: print('ERROR:', e)
             self.saveData()
 
 
