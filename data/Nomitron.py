@@ -422,14 +422,16 @@ class DiscordNomicBot():
         #        await self.on_message(msg)
 
         while 1:
-            while self.now() - self.Data['Time'] < self.minute/2:
-                await self.checkSchedule()
-                await asyncio.sleep(2)
 
             self.Data['Time'] = self.now()
             self.Data['lastAlive'] = datetime.datetime.now()
 
-            try: await self.passToModule('update')
+            while self.now() - self.Data['Time'] < self.minute/2:
+                await self.checkSchedule()
+                await asyncio.sleep(2)
+
+            await self.passToModule('update')
+            try: pass
             except Exception as e: print('ERROR:', e)
             try:await self.runTasks()
             except Exception as e: print('ERROR:', e)
@@ -726,7 +728,7 @@ class DiscordNomicBot():
     Get Datetime (Updated to Nomitron 4)
     """
     def time(self, *args, **kwargs):
-        return datetime.datetime(*args,**kwargs,tzinfo = pytz.timezone('US/Central'))
+        return datetime.datetime(*args,**kwargs,tzinfo = pytz.timezone('Etc/GMT+6'))
 
 
     """
@@ -734,7 +736,7 @@ class DiscordNomicBot():
     """
     def now(self,):
 
-        t = datetime.datetime.now(pytz.timezone('US/Central'))
+        t = datetime.datetime.now(pytz.timezone('Etc/GMT+6'))
         t = self.time(t.year, t.month, t.day, t.hour, t.minute, t.second)
         return t
 

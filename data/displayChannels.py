@@ -3,6 +3,7 @@ import datetime, yaml
 async def update(self,):
     await updateSchedules(self,)
     await updateData(self,)
+    if len(self.Data['PlayerData']) == 0: return
     for pid in self.Data['PlayerData'].keys():
         await updatePlayer(self, pid)
     
@@ -38,7 +39,7 @@ async def updateSchedules(self,):
             msgs[sched] += f"   To become: {nt} \n"
             msgs[sched] += f"   It is now: {ct} "
         
-        msgs[sched] = msgs[sched].replace('-05:51','')
+        msgs[sched] = msgs[sched].replace('-05:51','').replace('-06:00','').replace('-05:00','').replace('+05:00','')
 
     for k in sorted(msgs.keys()): toSend.append(msgs[k].strip())
 
@@ -106,6 +107,9 @@ async def updatePlayer(self,pid):
             self.Data['PlayerData'][pid]['Info-Channel'] = channel.name
 
             print('   |   Added Channel:', channel.name)
+        else: 
+            channelName = f"{self.Data['PlayerData'][pid]['Name'].lower()}-game-data".replace('#','-').replace(' ','-').replace('$','s')
+            self.Data['PlayerData'][pid]['Info-Channel'] = channelName
     channel = self.Refs['channels'].get(channelName)
       
 
@@ -135,7 +139,7 @@ async def updatePlayer(self,pid):
         if name in paramMap: name = paramMap[name]
         msgs[k]  = f"**{name}**:   {val}"
 
-        msgs[k] = msgs[k].replace('-05:51','')
+        msgs[k] = msgs[k].replace('-05:51','').replace('-05:00','').replace('-06:00','').replace('+05:00','')
 
     for k in sorted(msgs.keys()): toSend.append(msgs[k].strip())
 
@@ -213,7 +217,7 @@ async def updateData(self):
         msgs[k]  = f"**{name}**:   {val}"
         
         for pid in self.Data['PlayerData'].keys():
-            msgs[k] = msgs[k].replace(str(pid), self.Data['PlayerData'][pid]['Name']).replace('-05:51','').replace('-06:00','')
+            msgs[k] = msgs[k].replace(str(pid), self.Data['PlayerData'][pid]['Name']).replace('-05:51','').replace('-06:00','').replace('-05:00','').replace('+05:00','')
 
     for k in sorted(msgs.keys()): toSend.append(msgs[k].strip())
 
