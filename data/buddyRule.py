@@ -15,8 +15,7 @@ async def tally_buds(self):
         baseIsPurple = self.Refs['players'][basePID].get_role(self.Refs['roles']['Purple'].id) 
 
         allSame = True
-        for b in bud:
-            pid = bud[0]
+        for pid in bud:
             isGreen  = self.Refs['players'][pid].get_role(self.Refs['roles']['Green'].id) 
             isOrange = self.Refs['players'][pid].get_role(self.Refs['roles']['Orange'].id) 
             isPurple = self.Refs['players'][pid].get_role(self.Refs['roles']['Purple'].id) 

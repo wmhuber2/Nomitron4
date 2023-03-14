@@ -422,13 +422,13 @@ class DiscordNomicBot():
         #        await self.on_message(msg)
 
         while 1:
-
-            self.Data['Time'] = self.now()
             self.Data['lastAlive'] = datetime.datetime.now()
 
-            while self.now() - self.Data['Time'] < self.minute/2:
+            startTime = self.now()
+            while self.now() - startTime < self.minute/2:
                 await self.checkSchedule()
                 await asyncio.sleep(2)
+                self.Data['Time'] = self.now()
 
             await self.passToModule('update')
             try: pass
