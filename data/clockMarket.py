@@ -93,7 +93,7 @@ async def setInvestments(self, payload):
         pid = player.id
 
         toset = 0
-        try: toset = int(cont[2])
+        try: toset = float(cont[2])
         except ValueError: return
         print("   |  ", toset)
         self.Data['PlayerData'][pid]['ClockMarket']['Ballance'] = toset
