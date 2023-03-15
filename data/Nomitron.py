@@ -21,7 +21,7 @@ moderators  = ['Fenris#6136', 'Crorem#6962', 'iann39#8298', 'Alekosen#6969']
 BotChannels = ['market', 'actions','off-topic', 'courtroom', 'critic-responses',
                'voting','voting-1','voting-2','voting-3','voting-4',
                'proposals', 'suber-proposals','mod-lounge', 'bot-spam',
-               'deck-edits', 'queue', 'DM', 'game', 'combat']
+               'deck-edits', 'queue', 'DM', 'game', 'combat','emergency-deck-edits']
 dontLogFunc = ['sudo', 'sudont','f','r','find','rule','ping']
 '''
 Implement Modules By Placing Module Python File In Same Directory
