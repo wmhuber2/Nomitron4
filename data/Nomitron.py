@@ -147,6 +147,8 @@ class DiscordNomicBot():
             self.Data['CurrTurnStartTime'] = dayStart
         if 'NextTurnStartTime' not in self.Data:    
             self.Data['NextTurnStartTime'] = dayStart
+        if 'Haymaker' not in self.Data:    
+            self.Data['Haymaker'] = []
             
         if isinstance(self.Data['CurrTurnStartTime'], int):
             self.Data['CurrTurnStartTime'] = datetime.datetime.fromtimestamp(self.Data['CurrTurnStartTime'], pytz.timezone('US/Central'))
