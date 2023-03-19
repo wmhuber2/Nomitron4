@@ -37,7 +37,6 @@ abstainVotes  = ['abstain', 'withdraw']
 
 # schedule (Done)
 async def bot_tally(self):
-    await updateProposal(self)
     # Tally Main Voting Queue
     for chanName, chanKey in channelMap.items():
         if self.Data[chanKey]['ProposingPlayer'] is None or len(self.Data[chanKey]['ProposingText']) <= 1:
