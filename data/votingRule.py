@@ -45,8 +45,8 @@ async def bot_tally(self):
 
         player = "Undefined"
         isDoom = self.Data[chanKey]['ProposingPlayer'] == "DOOM"
-        isSuber = self.Data[chanKey]['Suber'] is not None
-        isHaymaker = self.Data[chanKey]['Haymaker'] is not None
+        isSuber = self.Data[chanKey].get('Suber') is not None
+        isHaymaker = self.Data[chanKey].get('Haymaker') is not None
 
         if not isDoom: player = self.Data['PlayerData'][ self.Data[chanKey]['ProposingPlayer'] ]['Name']
 
