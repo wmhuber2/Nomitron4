@@ -211,7 +211,8 @@ async def enableVoting(self, payload = None, channelKey = None):
                     self.Refs['roles']['On Deck']
                 ) 
             )                
-    await updateProposal(self)
+    if channelKey is None:    
+        await updateProposal(self)
 
 # shedule, Command, Function
 async def disableVoting(self, payload = None, channelKey = None):
@@ -227,8 +228,8 @@ async def disableVoting(self, payload = None, channelKey = None):
 
         await self.Refs['channels'][chan].set_permissions(self.Refs['roles']['Player'], send_messages=False)
         #await self.Refs['channels']['actions'].send(f"-  Vote in #{chan}.")
-        
-    await updateProposal(self)
+    if channelKey is None:    
+        await updateProposal(self)
 
 # schedule (Done)
 async def popProposal(self, payload = None):
@@ -360,8 +361,8 @@ async def popProposal(self, payload = None):
         self.updateSchedule('End Of Turn', delta = self.day)
         await self.Refs['channels']['game'].send("<@250132828950364174> does the wording of this proposal have your certified Daniel seal of approval?")
 
-    await updateProposal(self)
-    await create_queue(self)
+    self.Tasks.add( updateProposal(self) )
+    self.Tasks.add( create_queue(self) )
 
 # command (Done)
 async def yay(self, payload):
