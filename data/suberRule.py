@@ -1,6 +1,5 @@
 import time, discord, io
 
-zipChan = list(zip(['Suber-Votes-1','Suber-Votes-2', 'Suber-Votes-3', 'Suber-Votes-4'],  [ 'voting-1','voting-2','voting-3','voting-4',]))
 maxSuberCount = 12
 
 whipEmojiMap = "1️⃣ 2️⃣ 3️⃣ 4️⃣ 5️⃣ 6️⃣ 7️⃣ 8️⃣ 9️⃣ 🔟".split(' ')
@@ -206,52 +205,6 @@ async def suberTick(self): # ( Done )
 
     await create_array(self)
   
-# schedule
-async def popSuber(self): # (Done
-    def keySortSub(key):
-        return float(f"-{len(self.Data['Subers'][key[0]][key[1]]['Supporters'])}{1e10 - self.Data['Subers'][key[0]][key[1]]['DOB'].timestamp()}")
-
-    # Reset Channels
-    votesCopy = dict()
-    for subChan, disChan in list(zipChan): 
-        votesCopy[subChan] = self.Data[subChan]
-        if disChan == 'voting': self.Data[subChan]['Suber'] = None
-        votesCopy[subChan]['ProposingPlayer'] = None
-        votesCopy[subChan]['ProposingMSGs']   = []
-        votesCopy[subChan]['ProposingText']   = ""
-        await self.Refs['channels'][disChan].set_permissions(self.Refs['roles']['Player'], send_messages=False)
-
-    # Suber Channels
-    usedChan = []
-    for suberKey in self.Data['Subers'].keys(): 
-        MajorOrMinor = list(sorted( [(suberKey, 'Assenter'), (suberKey, 'Dissenter')], key=keySortSub))[0][-1]
-        print('MM',MajorOrMinor)
-        pid  = self.Data['Subers'][suberKey][MajorOrMinor]['Whip']
-        if len(self.Data['Subers'][suberKey][MajorOrMinor]['Proposal']) > 1:
-            for subChan, disChan in list(zipChan): 
-                if disChan == 'voting' or subChan in usedChan: continue
-                if self.Data[subChan]['ProposingPlayer'] is None:
-                    print("   |   Pop Suber", subChan, MajorOrMinor, "into", subChan, disChan )
-                    votesCopy[subChan] = { 'Yay':[], 'Nay':[], 'Abstain':[], 'ProposingMSGs':[], 'ProposingPlayer':pid,
-                        'Suber':f"Proposal {suberKey}'s SUBER: Suber {self.Data['Subers'][suberKey][MajorOrMinor]['Party']} Whip:",
-                        'ProposingText':                          str(self.Data['Subers'][suberKey][MajorOrMinor]['Proposal']),
-                        'Proposal#':self.Data['Proposal#'], 'SuberKey':suberKey
-                        }
-                    self.Data['Proposal#'] =+ 1
-                    self.Tasks.update(set([
-                        self.set_data(['Subers',suberKey,MajorOrMinor,'File'],       ''),
-                        self.set_data(['Subers',suberKey,MajorOrMinor,'Supporters'], []),
-                        self.set_data(['Subers',suberKey,MajorOrMinor,'Proposal'],   ''),
-                        self.set_data(['Subers',suberKey,MajorOrMinor,'DOB'],        self.now())
-                    ]))
-                    usedChan.append(subChan)
-
-                    print('   |   - PopProposal To Suber: ',suberKey, MajorOrMinor)
-                    await self.Refs['channels'][disChan].set_permissions(self.Refs['roles']['Player'], send_messages=True)
-                    break
-    for key in votesCopy.keys():
-        self.Tasks.add( self.set_data([key,], votesCopy[key]) )
-
 async def rmSuber(self, payload):
     if payload.get('Author') not in self.moderators: return
     argv = payload['Content'].split(' ')
@@ -262,29 +215,6 @@ async def rmSuber(self, payload):
     if k in self.Data['Subers']:
         print('   |   Removing Suber', k)
         del self.Data['Subers'][k]
-
-            
-
-# schedule
-async def suber_tally(self): #( Done )
-    # Tally SUBERS
-    for chan in ['Suber-Votes-1','Suber-Votes-2', 'Suber-Votes-3', 'Suber-Votes-4']: 
-        if self.Data[chan]['ProposingPlayer'] is None: continue
-        player        = self.Data['PlayerData'][ self.Data[chan]['ProposingPlayer'] ]['Name']
-        votingPlayers  = len(self.Data[chan]['Yay']) + len(self.Data[chan]['Nay'])
-        activePlayers = len(self.Refs['roles']['Player'].members) - len(self.Refs['roles']['Inactive'].members)
-
-        if len(self.Data[chan]['ProposingText']) < 1: continue
-        if len(self.Data[chan]['Yay']) > len(self.Data[chan]['Nay']):
-            await self.Refs['channels']['actions'].send(f" - {player}'s SUBER Proposal Passes\n" \
-                f"- Tally: {len(self.Data[chan]['Yay'])} For, {len(self.Data[chan]['Nay'])} Against.\nSUBER is Disbanded\n\n")
-            del self.Data['Subers'][self.Data[chan]['SuberKey']]
-
-        else:
-            await self.Refs['channels']['actions'].send(f" - {player}'s SUBER Proposal Failed \n" \
-                f"- Tally: {len(self.Data[chan]['Yay'])} For, {len(self.Data[chan]['Nay'])} Against.\n\n")
-            for line in proposalText(self, chan):
-                await self.Refs['channels']['failed-proposals'].send(line)
 
 # funtion (Done)
 def proposalText(self, voteChan):
@@ -313,68 +243,11 @@ def proposalText(self, voteChan):
     if len(msg) > 1: topin.append(msg)
     return topin
 
-# function (Done)
-async def actuallyUpdateVotingProposal(self):
-    def is_proposalMSG(m): 
-        for chan in channelMap.keys():
-            if m.id in self.Data[chan]['ProposingMSGs']: return True
-        return False
-
-    last_update_prop_time = time.time()
-    hold_for_update_prop = False
-    
-
-    for subChan, disChan in zipChan:
-        lines = proposalText(self, subChan)
-
-        if len(lines) != len(self.Data[subChan]['ProposingMSGs']):
-            self.Data[subChan]['ProposingMSGs'] = []
-            for line in lines:
-                msg = await self.Refs['channels'][disChan].send(line)
-                self.Data[subChan]['ProposingMSGs'].append([msg.id, line])
-        for i in range(len(self.Data[subChan]['ProposingMSGs'])): 
-            mid, old_line = self.Data[subChan]['ProposingMSGs'][i] 
-            line = lines[i]
-            if line != old_line:
-                try: msg = await self.Refs['channels'][disChan].fetch_message(mid) 
-                except: 
-                    self.Data[subChan]['ProposingMSGs'] = []
-                    await actuallyUpdateVotingProposal(self)
-                    return
-                await msg.edit(content = line)
-                self.Data[subChan]['ProposingMSGs'][i] = [mid, line]
-
 """
 Main Run Function On Messages (Done)
 """
 async def on_message(self, payload):
     isInactive = self.Refs['players'][payload['raw'].author.id].get_role(self.Refs['roles']['Inactive'].id) is not None
-
-    if payload['Channel'] in self.Mods.votingRule.channelMap.keys() and payload['Channel'] != "voting":
-        # Remove MSG if from a non Player (Bot, Illegal, Etc)
-        if payload['Author ID'] not in self.Data['PlayerData'] or self.Data['VotingEnabled']:
-            print('   |   Suber Removing', payload['Content'])
-            await payload['raw'].delete()
-            return
-        
-        # Enable Activity
-        await self.Mods.inactivityRule.activeOnVote(self, payload['Author ID'])
-
-        # Register Vote
-        vote = payload['Content'].lower().strip()
-        if vote in self.Mods.votingRule.yayVotes:
-            await self.Mods.votingRule.yay(self, payload)
-            await payload['raw'].add_reaction('✔️')
-        elif vote in self.Mods.votingRule.nayVotes:
-            await self.Mods.votingRule.nay(self, payload)
-            await payload['raw'].add_reaction('✔️')
-        elif vote in self.Mods.votingRule.abstainVotes:
-            await self.Mods.votingRule.abstain(self, payload)
-            await payload['raw'].add_reaction('✔️')
-        else:
-            await payload['raw'].add_reaction('❌')
-            await self.dm(payload['raw'].author.id, "Your vote is ambigious, Please use appropriate yay, nay, or withdraw text." )
-            return
 
     if payload['Channel'] == 'suber-proposals': # Done For Nomic 4
         isWhipFor = []
@@ -434,7 +307,6 @@ async def on_message(self, payload):
                 "ProposalText": proposalText,
                 "msgid": msg.id
             }
-    await actuallyUpdateVotingProposal(self)
 
 
 async def on_reaction(self, payload): # (Done)
@@ -466,7 +338,6 @@ async def on_reaction(self, payload): # (Done)
                     await payload['user'].send( content = "You must wait for the Minority Whip To be Elected before nominating Majority Whips")
                     return
                 self.Data['Subers'][suberKey][MajorOrMinor]['Whip'].append({'Name':payload['user'].id, 'Supporters':[payload['user'].id], 'DOB':self.now()})
-                await actuallyUpdateVotingProposal(self)
                 await create_array(self)
         
         # Choose a Whip
@@ -485,21 +356,18 @@ async def on_reaction(self, payload): # (Done)
                             self.Data['Subers'][suberKey][MajorOrMinor]['Whip'][whipKey]['Supporters'].remove(payload['user'].id)                    
                     self.Data['Subers'][suberKey][MajorOrMinor]['Whip'][endorsedIndex]['Supporters'].append(payload['user'].id)
                 else: return         
-                await actuallyUpdateVotingProposal(self)
                 await create_array(self)
 
         # Endorse Proposal
         if self.Data['Subers'][suberKey][MajorOrMinor]['Is Official'] and payload['emoji'] == '👍':
             if payload['user'].id not in self.Data['Subers'][suberKey][MajorOrMinor]['Supporters']:
                 self.Data['Subers'][suberKey][MajorOrMinor]['Supporters'].append(payload['user'].id)
-                await actuallyUpdateVotingProposal(self)
                 await create_array(self)
 
         # Unendorse Proposal
         if self.Data['Subers'][suberKey][MajorOrMinor]['Is Official'] and payload['emoji'] == '👎':
             if payload['user'].id in self.Data['Subers'][suberKey][MajorOrMinor]['Supporters']:
                 self.Data['Subers'][suberKey][MajorOrMinor]['Supporters'].remove(payload['user'].id)
-                await actuallyUpdateVotingProposal(self)
                 await create_array(self)
 
         # Get Info
@@ -525,9 +393,7 @@ async def on_reaction(self, payload): # (Done)
             self.Data['PlayerData'][payload['user'].id]['Query'] = None 
 
             await payload['message'].add_reaction('✔️')
-            await actuallyUpdateVotingProposal(self)
             await create_array(self)
 
 async def update(self):
     await create_array(self)
-    await actuallyUpdateVotingProposal(self)

@@ -10,7 +10,6 @@ async def endTurn(self, payload = None):
 
    
     await self.Mods.votingRule.bot_tally(self)
-    await self.Mods.suberRule.suber_tally(self)
     #try: await self.Mods.rochambouRule.tally_RPS(self)
     #except Exception as e:
     #    print(e)
@@ -24,7 +23,6 @@ async def startTurn(self):
 
     await self.Mods.suberRule.suberTick(self)
     await self.Mods.votingRule.popProposal(self)
-    await self.Mods.suberRule.popSuber(self)
     await self.Mods.moodRule.checkEmotions(self)
     await self.Mods.coreMethods.rmJudge(self)
     await self.Mods.gladiatorRule.gladiatorPointCheck(self)

@@ -1,39 +1,3 @@
-Bot Commands:
-
-    !rule $num        :
-    !r $num           :  Display Rule Number $num if it exists.
-
-    !find KEY_WORDS   :
-    !search KEY_WORDS :
-    !f KEY_WORDS      :  Display rules that contain text.
-
-    !help             :  Display This Help Text
-    !roll [[d]]#      :  Roll dice
-
-    !challenge        :  Challenge a gladiator
-
-    !give @player               : Give @player a Friendship Token
-    !offer @player #NUM [TERMS] : Create an offer in #market
-    !offer all #NUM [TERMS]     : Create an offer in #market
-
-    !green            :  Turn Green
-    !orange           :  Turn Orange
-    !purple           :  Turn Purple
-
-    !hearts
-    !diamonds
-    !spades
-    !clubs
-
-    !ping             :  Pings Bot
-    !turnStats        :  Get Turn Debug Info
-
-    !optIn            :  Opt In of Critic Pool
-    !optOut           :  Opt Out of Critic Pool
-
-    !nick             :  Set Nickname
-    !me               :  Get Your Player Info
-
 Mod Commands:
 
     !sudo             :  Add Mod Role
@@ -61,6 +25,11 @@ Mod Commands:
     !orange @player   :  Turn @player Orange
     !purple @player   :  Turn @player Purple
 
+    !hearts @player   :  Turn @player hearts
+    !diamonds @player :  Turn @player diamonds
+    !spades @player   :  Turn @player spades
+    !clubs @player    :  Turn @player clubs
+    
     !toggleEmoji @player EMOJI : Toggle Nickname Emoji For player name
 
     !getNewCritic            :  Perform weekly update of Critics
@@ -68,6 +37,11 @@ Mod Commands:
     !resetChallenges @player :  Reset Tracker for if player has challenged for @players
     !setGladiator @player    :  Set the player as Gladiator
 
-    !setTokens @player NUM   : Set player's frinedship tokens to NUM
-    !setOffer @player NUM    : Set player's offered frinedship tokens to NUM
+    !setTokens @player NUM     : Set player's frinedship tokens to NUM
+    !setOffer @player NUM      : Set player's offered frinedship tokens to NUM
     !addExperience @player NUM : Add to player Exp
+
+    !setInvestments @player NUM     : Set player Clockmarket Investment Amount
+    !setInvestmentLimit @player NUM : Set player Clockmarket Investment Limits
+
+    !giveDI @player : Give player a Haymaker DI

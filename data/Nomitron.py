@@ -18,10 +18,7 @@ testServerId  = 1043621642938626171
 moderatorRole = "Moderator"
 playerRole    = "Player"
 moderators  = ['Fenris#6136', 'Crorem#6962', 'iann39#8298', 'Alekosen#6969']
-BotChannels = ['market', 'actions','off-topic', 'courtroom', 'critic-responses',
-               'voting','voting-1','voting-2','voting-3','voting-4',
-               'proposals', 'suber-proposals','mod-lounge', 'bot-spam',
-               'deck-edits', 'queue', 'DM', 'game', 'combat','emergency-deck-edits']
+NonBotChannels = []
 dontLogFunc = ['sudo', 'sudont','f','r','find','rule','ping']
 '''
 Implement Modules By Placing Module Python File In Same Directory
@@ -59,7 +56,7 @@ class DiscordNomicBot():
         self.Tasks = set()
         self.server = None
         self.moduleNames = []
-        self.BotChannels = BotChannels
+        self.NonBotChannels = NonBotChannels
         self.lastSaveTime= self.now() - datetime.timedelta(days=1)
 
         # Constants
@@ -132,7 +129,6 @@ class DiscordNomicBot():
     def updateData(self,):
 
         if 'Proposal#' not in self.Data:         self.Data['Proposal#']  = 300
-        if 'VotingEnabled' not in self.Data:     self.Data['VotingEnabled'] = False
         if 'Queue' not in self.Data:             self.Data['Queue']      = {}
         if 'Subers' not in self.Data:            self.Data['Subers']     = dict()
         for k in self.Data['Subers'].keys():
@@ -195,28 +191,6 @@ class DiscordNomicBot():
         if 'Time Created' in self.Data['Buddies']:
             del self.Data['Buddies']['Time Created']
 
-        if 'Votes' not in self.Data:
-            self.Data['Votes']  = {
-                'Yay':[], 'Nay':[], 
-                'Abstain':[], 'Proposal': {}, 
-                'ProposingMSGs':{},
-                'ProposingPlayer':None, 
-                'ProposingText':"", 
-                'Proposal#': 0 
-            }
-        for chan in range(5):
-            chan = f'Suber-Votes-{1+chan}'
-            if chan not in self.Data:
-                self.Data[chan] = {
-                    'Yay':[], 'Nay':[], 
-                    'Abstain':[], 'Proposal': {}, 
-                    'ProposingMSGs':{},
-                    'ProposingPlayer':None, 
-                    'ProposingText':"", 
-                    'Proposal#':0 , 
-                    'Suber':""
-                }
-
         for pid, player in self.Refs['players'].items():
             name = player.name + "#" + str(player.discriminator)
             if self.Refs['roles'][playerRole] not in player.roles: continue
@@ -270,6 +244,9 @@ class DiscordNomicBot():
         
             if 'Query' not in self.Data['PlayerData'][pid]:
                 self.Data['PlayerData'][pid]['Query'] = None
+
+            if "DI's" not in self.Data['PlayerData'][pid]:
+                self.Data['PlayerData'][pid]["DI's"] = dict()
 
             if 'Inactive' not in self.Data['PlayerData'][pid]:
                 self.Data['PlayerData'][pid]['Inactive'] = None
@@ -334,10 +311,11 @@ class DiscordNomicBot():
     """
     Pass a command to its respective module. (Updated to Nomitron 4)
     """   
-    async def passToModule(self, function, payload= None):
+    async def passToModule(self, function, payload= None, kwargs={}):
         targetFuncExists = False
         payload_tmp = []
         if payload is not None: payload_tmp = [dict(payload), ]
+        if kwargs is None: kwargs = {}
 
         # Search For Duplicates Modules
         for name in self.moduleNames:
@@ -355,15 +333,17 @@ class DiscordNomicBot():
         for name in self.moduleNames:
             mod = getattr(self.Mods, name)
             if hasattr(mod, function):
-                try:   toDo.append(getattr(mod, function)(self, *payload_tmp))
+                try:   toDo.append(getattr(mod, function)(self, *payload_tmp, **kwargs))
                 except self.discord.errors.HTTPException: 
                     print(f'!!! HTTP Error In Module: {name} {function}!!!')
+                    raise e
                 except Exception as e: 
                     print(f'!!! Error In Module: {name} {function} {e}!!!')
                     raise e
         try:await asyncio.gather( *toDo )
         except self.discord.errors.HTTPException: 
             print(f'!!! HTTP Error In Module: {name} {function}!!!')
+            raise e
         except Exception as e: 
             print(f'!!! Error In Module: {name} {function} {e}!!!')
             raise e
@@ -447,7 +427,7 @@ class DiscordNomicBot():
         if self.Refs['players'][message.author.id].get_role(self.Refs['roles'][self.playerRole].id) is None: return
 
         payload = self.messageAsPayload(message)
-        if payload['Channel'] not in self.BotChannels: return
+        if payload['Channel'] in self.NonBotChannels: return
 
         found = None
         if self.isholiday and payload.get('Author') not in self.moderators: return
@@ -567,7 +547,7 @@ class DiscordNomicBot():
         if isinstance(pid, int): player = self.Refs['players'][pid]
         else:                    player = pid
        
-        try:     await player.send(msg)
+        try:     return await player.send(msg)
         except:  print('Failed to DM', player.name)
 
 
@@ -617,7 +597,7 @@ class DiscordNomicBot():
     """
     Schedule Event (Updated to Nomitron 4)
     """
-    def schedule(self,name,function, parameter, nextTime, interval):
+    def schedule(self,name,function, parameter, nextTime, interval, varis=None):
         if name in self.Data['Schedules']: 
             print(f'      Schedule {name} Exists: Skipping...')
             return 
@@ -630,7 +610,8 @@ class DiscordNomicBot():
                 'nextTime'  : nextTime,
                 'interval'  : interval,
                 'parameter' : parameter,
-                'function'  : funcName
+                'function'  : funcName,
+                'variables' : varis
             }
 
 
@@ -689,7 +670,8 @@ class DiscordNomicBot():
 
                 # Run Event
                 toDoNames.append(sched)
-                toDo.append(self.passToModule(self.Data['Schedules'][sched]['function']))
+                kwargs = self.Data['Schedules'][sched].get('variables')
+                toDo.append(self.passToModule(self.Data['Schedules'][sched]['function'], kwargs = kwargs))
 
                 # Re-Schedule or Close Schedule
                 interval = self.Data['Schedules'][sched]['interval']

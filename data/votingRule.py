@@ -3,19 +3,26 @@
 # Voting System Module For Discord Bot
 ################################
 import pickle, sys, time, io, discord, datetime, urllib, re, random
+from copy import *
 channelMap = {
-        'voting': 'Votes',
-        'voting-1': 'Suber-Votes-1',
-        'voting-2': 'Suber-Votes-2',
-        'voting-3': 'Suber-Votes-3',
-        'voting-4': 'Suber-Votes-4',
+        'voting'  : 'Votes',
+        'voting-1': 'Votes-1',
+        'voting-2': 'Votes-2',
+        'voting-3': 'Votes-3',
+        'voting-4': 'Votes-4',
+        'voting-5': 'Votes-5',
 }
-
-last_update_prop_time = 0
-hold_for_update_prop = False
-
-last_update_deck_time = 0
-hold_for_update_deck = False
+defaultDict = {
+                'Yay':[], 'Nay':[], 
+                'Abstain':[], 'Proposal': {}, 
+                'ProposingMSGs':{},
+                'ProposingPlayer':None, 
+                'ProposingText':"", 
+                'Proposal#': 0,
+                'Suber': None,
+                'Haymaker': None,
+                'VotingEnabled': False
+            }
 
 
 yayEmojis = []
@@ -30,65 +37,65 @@ abstainVotes  = ['abstain', 'withdraw']
 
 # schedule (Done)
 async def bot_tally(self):
-    # Tally Main Voting Queue
-    if self.Data['Votes']['ProposingPlayer'] is None or len(self.Data['Votes']['ProposingText']) <= 1:
-            await self.Refs['channels']['actions'].send(f"**Vote Status:** No Proposal was on Deck")
-    else:
-        player = "Undefined"
-        isDoom = 0
-        if self.Data['Votes']['ProposingPlayer'] == "DOOM":
-            player = "Intentional Game Design"
-            isDoom = 1
-        else:
-            player = self.Data['PlayerData'][ self.Data['Votes']['ProposingPlayer'] ]['Name']
 
-        votingPlayers = len(self.Data['Votes']['Yay']) + len(self.Data['Votes']['Nay'])
+    # Tally Main Voting Queue
+    for chanName, chanKey in channelMap.items():
+        if self.Data[chanKey]['ProposingPlayer'] is None or len(self.Data[chanKey]['ProposingText']) <= 1:
+            continue
+
+        player = "Undefined"
+        isDoom = self.Data[chanKey]['ProposingPlayer'] == "DOOM"
+        isSuber = self.Data[chanKey]['Suber'] is not None
+        isHaymaker = self.Data[chanKey]['Haymaker'] is not None
+
+        if not isDoom: player = self.Data['PlayerData'][ self.Data[chanKey]['ProposingPlayer'] ]['Name']
+
+        votingPlayers = len(self.Data[chanKey]['Yay']) + len(self.Data[chanKey]['Nay'])
         activePlayers = len(self.Refs['roles']['Player'].members) - len(self.Refs['roles']['Inactive'].members)
         losers        = None
 
 
         # Tally Main Voting ( Nomitron 4 Safe)
-        if len(self.Data['Votes']['ProposingText']) <= 1:
-            await self.Refs['channels']['actions'].send(f"**Vote Status:** No Proposal was on Deck\n\n" )
-
-        elif len(self.Data['Votes']['Yay']) + isDoom > len(self.Data['Votes']['Nay']):
+        if len(self.Data[chanKey]['Yay']) + 0.5*int(isDoom) > len(self.Data[chanKey]['Nay']):
             losers = ['Dissenter','Nay']
-            await self.Refs['channels']['actions'].send(f"**Vote Status:**  {player}'s Proposal Passes\n" \
-                f"- Tally: {len(self.Data['Votes']['Yay'])} For, {len(self.Data['Votes']['Nay'])} Against.")
+            await self.Refs['channels']['actions'].send(f"- **Vote Status:**  {player}'s {'SUBER ' if isSuber else ''}Proposal Passes\n" \
+                f"  Tally: {len(self.Data[chanKey]['Yay'])} For, {len(self.Data[chanKey]['Nay'])} Against.")
         else:
             losers = ['Assenter','Yay']
-            await self.Refs['channels']['actions'].send(f"**Vote Status:**  {player}'s Proposal Failed \n" \
-                f"- Tally: {len(self.Data['Votes']['Yay'])} For, {len(self.Data['Votes']['Nay'])} Against.")
-            for line in proposalText(self, 'Votes'):
+            await self.Refs['channels']['actions'].send(f"- **Vote Status:**  {player}'s {'SUBER ' if isSuber else ''}Proposal Failed \n" \
+                f"  Tally: {len(self.Data[chanKey]['Yay'])} For, {len(self.Data[chanKey]['Nay'])} Against.")
+            for line in proposalText(self, chanKey):
                 await self.Refs['channels']['failed-proposals'].send(line)
-         
-         
+        
+
+
         # Form SUBERS if necassary
-        print('   |   - SUBER', len(self.Data['Votes'][losers[1]]) , votingPlayers, activePlayers)
-        if votingPlayers == 0: return
-        if len(self.Data['Votes'][losers[1]])  >= 0.2 * votingPlayers and (activePlayers <= 2 * votingPlayers):
-            self.Tasks.add(
-                self.set_data(['Subers',self.Data['Votes']['Proposal#']], {
-                    'Proposal#' : self.Data['Votes']['Proposal#'],
-                    'Assenter': {
-                        'Members':self.Data['Votes']['Yay'], 'Is Official': False, 'Whip' : [],
-                        'Proposal' : "", 'Supporters' : [],'DOB' : self.now(),
-                        'Party': ['Minority', 'Majority'][losers == "Yay"]
-                    },
-                    'Dissenter': {
-                        'Members':self.Data['Votes']['Nay'], 'Is Official': False, 'Whip' : [],
-                        'Proposal' : "", 'Supporters' : [], 'DOB' : self.now(),
-                        'Party': ['Minority', 'Majority'][losers == "Nay"]
-                    },
-                    'Date': self.Data['Day']+1, 'Turn': self.Data['Turn']+1, 'Voting Channel': None, 'Loser' : losers[0]
-                }
-            ))
-           
-            await self.Refs['channels']['actions'].send(
-                f"**A SUBER has been formed! \n" \
-                f"   Assenters:  {' '.join([f'<@{pid}>' for pid in self.Data['Votes']['Yay'] ])}\n\n" \
-                f"   Dissenters: {' '.join([f'<@{pid}>' for pid in self.Data['Votes']['Nay'] ])}\n\n"
-            )
+        if not isSuber and not isHaymaker:
+            print('   |   - SUBER', len(self.Data[chanKey][losers[1]]) , votingPlayers, activePlayers)
+            if votingPlayers == 0: return
+            if len(self.Data[chanKey][losers[1]])  >= 0.2 * votingPlayers and (activePlayers <= 2 * votingPlayers):
+                self.Tasks.add(
+                    self.set_data(['Subers',self.Data[chanKey]['Proposal#']], {
+                        'Proposal#' : self.Data[chanKey]['Proposal#'],
+                        'Assenter': {
+                            'Members':self.Data[chanKey]['Yay'], 'Is Official': False, 'Whip' : [],
+                            'Proposal' : "", 'Supporters' : [],'DOB' : self.now(),
+                            'Party': ['Minority', 'Majority'][losers == "Yay"]
+                        },
+                        'Dissenter': {
+                            'Members':self.Data[chanKey]['Nay'], 'Is Official': False, 'Whip' : [],
+                            'Proposal' : "", 'Supporters' : [], 'DOB' : self.now(),
+                            'Party': ['Minority', 'Majority'][losers == "Nay"]
+                        },
+                        'Date': self.Data['Day']+1, 'Turn': self.Data['Turn']+1, 'Voting Channel': None, 'Loser' : losers[0]
+                    }
+                ))
+            
+                await self.Refs['channels']['actions'].send(
+                    f"**A SUBER has been formed! \n" \
+                    f"   Assenters:  {' '.join([f'<@{pid}>' for pid in self.Data[chanKey]['Yay'] ])}\n\n" \
+                    f"   Dissenters: {' '.join([f'<@{pid}>' for pid in self.Data[chanKey]['Nay'] ])}\n\n"
+                )
 
 # funtion (Done)
 def proposalText(self, voteChan):
@@ -96,8 +103,7 @@ def proposalText(self, voteChan):
     if playerprop is None: return []
 
     msg = f"Proposal #{self.Data[voteChan]['Proposal#']}: "
-    if voteChan != 'Votes': msg += self.Data[voteChan]['Suber']
-    if self.Data['VotingEnabled'] or voteChan != 'Votes': msg += f"**Status: ({len(self.Data[voteChan]['Yay'])} For, {len(self.Data[voteChan]['Nay'])} Against.)** \n\n "
+    if self.Data[voteChan]['VotingEnabled']: msg += f"**Status: ({len(self.Data[voteChan]['Yay'])} For, {len(self.Data[voteChan]['Nay'])} Against.)** \n\n "
     else                    : msg += "**Status: ON DECK (No Voting)** \n\n "
     topin = []
 
@@ -119,47 +125,110 @@ def proposalText(self, voteChan):
 
 # function (Done)
 async def updateProposal(self):
+    for chanName, chanKey in channelMap.items():
+        # Get, Update And Create Voting Channels
+        chan = self.Refs['channels'].get(chanName)
+        if chan is None:
+            overwrites = {
+                self.Refs['roles'][self.moderatorRole]: self.discord.PermissionOverwrite(read_messages=True,  send_messages=True),
+                self.Refs['roles']['Bot']:              self.discord.PermissionOverwrite(read_messages=True,  send_messages=True),
+                self.server.default_role:               self.discord.PermissionOverwrite(read_messages=True, send_messages=False),
+            }
+            chan = await self.server.create_text_channel(chanName, overwrites=overwrites, category= self.Refs['category']['business'])
+            self.Refs['channels'][chan.name] = chan
+            self.Data[chanKey] = deepcopy(defaultDict)
+            print('   |   Added Voting Channel:', chan.name, chanName)
+        
+        if chanKey not in self.Data: self.Data[chanKey] = deepcopy(defaultDict) 
+        for k in defaultDict.keys():
+            if k not in self.Data[chanKey]:
+                self.Data[chanKey][k] = deepcopy(defaultDict[k])
+
+        # Update Text
+        if   self.Data[chanKey].get(   'Suber') is not None:
+            lines = self.Mods.suberRule.proposalText(self, chanKey)
+        elif self.Data[chanKey].get('Haymaker') is not None:
+            lines = self.Mods.haymakerRule.proposalText(self, chanKey)
+        else:
+            lines = proposalText(self, chanKey)
     
-    last_update_prop_time = time.time()
-    hold_for_update_prop = False
-
-    lines = proposalText(self, 'Votes')
-   
-    if not self.Data['VotingEnabled'] or len(self.Data['Votes']['ProposingMSGs']) == 0 \
-        or len(self.Data['Votes']['ProposingMSGs']) != len(lines):
-        if len(lines) != len(self.Data['Votes']['ProposingMSGs']):
-            print('   |   Resending Voting Proposal')
-            for msg in self.Data['Votes']['ProposingMSGs']: await msg.delete()
-            self.Data['Votes']['ProposingMSGs'] = []
+        # Update Channel
+        needToEdit = len(self.Data[chanKey]['ProposingMSGs']) != len(lines)
+        for i in range(len(self.Data[chanKey]['ProposingMSGs'])):
+            if needToEdit: break
+            if lines[i] != self.Data[chanKey]['ProposingMSGs'][i][1]:
+                needToEdit=True
+        
+        if not needToEdit: continue
+        if not self.Data[chanKey]['VotingEnabled'] \
+            or len(self.Data[chanKey]['ProposingMSGs']) != len(lines):
+            print('   |   Resending Voting Proposal',chanKey)
+            for mid, line in self.Data[chanKey]['ProposingMSGs']: 
+                try:
+                    msg = await chan.fetch_message(mid) 
+                    await msg.delete()
+                except: 
+                    print('Error: Lost Voting MSG')
+            self.Data[chanKey]['ProposingMSGs'] = []
             for line in lines:
-                msg = await self.Refs['channels']['voting'].send(line)
-                self.Data['Votes']['ProposingMSGs'].append([msg.id, line])
+                msg = await chan.send(line)
+                self.Data[chanKey]['ProposingMSGs'].append([msg.id, line])
 
-    for i in range(len(self.Data['Votes']['ProposingMSGs'])): 
-        if isinstance(self.Data['Votes']['ProposingMSGs'][i], int):
-            self.Data['Votes']['ProposingMSGs'][i] = [self.Data['Votes']['ProposingMSGs'][i], lines[i]]
-        mid, line  = self.Data['Votes']['ProposingMSGs'][i] 
-        if line != lines[i]:   
-            print('   |   Editing Voting Proposal')
-            try: msg = await self.Refs['channels']['voting'].fetch_message(mid) 
-            except: 
-                self.Data['Votes']['ProposingMSGs'] = []
-                await updateProposal(self)
-                return
-            await msg.edit(content = lines[i])
-            self.Data['Votes']['ProposingMSGs'][i] = [mid, lines[i]]
+        for i in range(len(self.Data[chanKey]['ProposingMSGs'])): 
+            if isinstance(self.Data[chanKey]['ProposingMSGs'][i], int):
+                self.Data[chanKey]['ProposingMSGs'][i] = [self.Data[chanKey]['ProposingMSGs'][i], lines[i]]
+            mid, line  = self.Data[chanKey]['ProposingMSGs'][i] 
+            if i >= len(lines):
+                await msg.edit(content = '.')
+                self.Data[chanKey]['ProposingMSGs'][i] = [mid, '.']
+            elif line != lines[i]:   
+                print('   |   Editing Voting Proposal',chanKey)
+                try: msg = await chan.fetch_message(mid) 
+                except: 
+                    self.Data[chanKey]['ProposingMSGs'] = []
+                    await updateProposal(self)
+                    return
+                await msg.edit(content = lines[i])
+                self.Data[chanKey]['ProposingMSGs'][i] = [mid, lines[i]]
 
 # shedule, Command, Function
-async def enableVoting(self, payload = None):
+async def enableVoting(self, payload = None, channelKey = None):
     if payload is not None and payload.get('Author') not in self.moderators: return
-    print('   |   Enabling Voting')
-    self.Data['VotingEnabled'] = True
+    if payload is not None: channelKey = payload['Channel']
 
-    for disChan in channelMap.keys(): 
-        await self.Refs['channels'][disChan].set_permissions(self.Refs['roles']['Player'], send_messages=False)
-    await self.Refs['channels']['voting'].set_permissions(self.Refs['roles']['Player'], send_messages=True)
-    await self.Refs['channels']['actions'].send("-  Players May Now Vote in #voting.")
-    for p in self.Refs['players'].values(): await p.remove_roles(self.Refs['roles']['On Deck'])
+    for chan in channelMap.keys():
+        if chan != channelKey and channelKey is not None: continue
+        if self.Data[channelMap[chan]]['ProposingPlayer'] is None: continue
+
+        print('   |   Enabling Voting', chan)
+        self.Data[channelMap[chan]]['VotingEnabled'] = True
+
+        await self.Refs['channels'][chan].set_permissions(self.Refs['roles']['Player'], send_messages=True)
+        await self.Refs['channels']['actions'].send(f"-  Players May Now Vote in #{chan}.")
+        print(self.Data[channelMap[chan]]['ProposingPlayer'])
+        if self.Data[channelMap[chan]]['ProposingPlayer'] in self.Refs['players'].keys():
+            self.Tasks.add( 
+                self.Refs['players'][self.Data[channelMap[chan]]['ProposingPlayer']].remove_roles( 
+                    self.Refs['roles']['On Deck']
+                ) 
+            )                
+    await updateProposal(self)
+
+# shedule, Command, Function
+async def disableVoting(self, payload = None, channelKey = None):
+    if payload is not None and payload.get('Author') not in self.moderators: return
+    if payload is not None: channelKey = payload['Channel']
+
+    for chan in channelMap.keys():
+        if chan != channelKey and channelKey is not None: continue
+        if self.Data[channelMap[chan]]['ProposingPlayer'] is None: continue
+
+        print('   |   Disabling Voting', chan)
+        self.Data[channelMap[chan]]['VotingEnabled'] = False
+
+        await self.Refs['channels'][chan].set_permissions(self.Refs['roles']['Player'], send_messages=False)
+        #await self.Refs['channels']['actions'].send(f"-  Vote in #{chan}.")
+        
     await updateProposal(self)
 
 # schedule (Done)
@@ -168,53 +237,106 @@ async def popProposal(self, payload = None):
     def keySortSub(key):
         return float(f"-{len(self.Data['Subers'][key[0]][key[1]]['Supporters'])}{1e10 - self.Data['Subers'][key[0]][key[1]]['DOB'].timestamp()}")
 
-    # Reset Channels
-    votesCopy = dict(self.Data['Votes'])
-    votesCopy['ProposingPlayer'] = None
-    votesCopy['ProposingMSGs']   = []
-    votesCopy['ProposingText']   = ""
-    self.Tasks.add( self.Refs['channels']['voting'].set_permissions(self.Refs['roles']['Player'], send_messages=False) )
+    # Determine How Many Props to Pop From Queue
+    nQueue = 0
+    for pid in self.Data['Queue']: 
+        if self.Data['PlayerData'][pid]['Proposal']['File'] is not None and len(self.Data['PlayerData'][pid]['Proposal']['File']) > 1: 
+           nQueue += 1
 
-    # Voting Channel
-    print('   |   PopProposal To Deck:')
+    nQueue = int(nQueue/6) +1
+    sliceQueue    = self.Data['Queue'][:nQueue]
+    sliceHaymaker = self.Data['Haymaker'][:1]
+    sliceArray    = list(self.Data['Subers'].keys())
+    self.Tasks.add( self.set_data(['Queue'], self.Data['Queue'][nQueue:] ) )
+    print('   |   PopProposal To Deck:', len(sliceQueue))
+
+
+    # Pop Proposals
     gotProp = False
-    if len(self.Data['Queue']) > 0: 
-        pid = self.Data['Queue'][0]
-        if len(self.Data['PlayerData'][pid]['Proposal']['File']) > 1: 
-            self.Tasks.add( self.set_data(['Queue'],  self.Data['Queue'][1:] ) )
-            print('   |   - Popping Proposal: ', self.Data['PlayerData'][pid]['Name'])
-
+    for k,p in self.Refs['players'].items(): await p.remove_roles(self.Refs['roles']['On Deck']) 
+    for chanName, chanKey in channelMap.items():
+        # Reset Channels
+        votesCopy = deepcopy(defaultDict)
+        
+        # QUEUE
+        if len(sliceQueue) > 0: 
+            pid = sliceQueue.pop(0)
             if len(self.Data['PlayerData'][pid]['Proposal']['File']) > 1: 
-                for k,p in self.Refs['players'].items():  
-                    if k != pid: self.Tasks.add( p.remove_roles(self.Refs['roles']['On Deck']) )
-                    else:        self.Tasks.add( p.add_roles(   self.Refs['roles']['On Deck']) )
+                print('   |   - Popping Proposal: ', self.Data['PlayerData'][pid]['Name'])
+
+                self.Tasks.add( self.Refs['players'][pid].add_roles( self.Refs['roles']['On Deck']) )
                 
-                votesCopy = { 'Yay':[], 'Nay':[], 'Abstain':[], 'ProposingMSGs':[], 'ProposingPlayer':pid,
-                                'ProposingText':str(self.Data['PlayerData'][pid]['Proposal']['File']),
-                                'Proposal#':self.Data['Proposal#']}
+                votesCopy.update({ 'ProposingPlayer':pid,
+                                   'ProposingText':str(self.Data['PlayerData'][pid]['Proposal']['File']),
+                                   'Proposal#':self.Data['Proposal#']})
                 self.Data['Proposal#'] += 1
                 self.Tasks.update(set([
                     self.set_data(['PlayerData',pid,'Proposal','File'],       ''),
                     self.set_data(['PlayerData',pid,'Proposal','Supporters'], []),
                     self.set_data(['PlayerData',pid,'Proposal','DOB'], self.now())
                 ]))
+                self.Tasks.add( self.set_data([chanKey], votesCopy ) )
                 gotProp = True
-                self.schedule(
-                    name = 'Enable Voting', 
-                    function = enableVoting, 
-                    parameter = 'Day',
-                    nextTime = self.Data['Day'] + 1,
-                    interval = None
-                )
-                self.updateSchedule('End Of Turn', delta = self.day)
+                self.Tasks.add( disableVoting(self, channelKey = chanName) )
+                await self.Refs['channels']['game'].send("<@250132828950364174> does the wording of this proposal have your certified Daniel seal of approval?")
 
+        # SUBERS
+        elif len(sliceQueue) == 0 and len(sliceArray) > 0:
+            while 1:
+                if len(sliceArray) == 0: break
+                suberKey = sliceArray.pop(0)
+                MajorOrMinor = list(sorted( [(suberKey, 'Assenter'), (suberKey, 'Dissenter')], key=keySortSub))[0][-1]
+                print('MM',MajorOrMinor)
+                pid  = self.Data['Subers'][suberKey][MajorOrMinor]['Whip']
+                if len(self.Data['Subers'][suberKey][MajorOrMinor]['Proposal']) > 1 \
+                    and Data[subChan]['ProposingPlayer'] is not None: 
+                    print("   |   Pop Suber", pid, suberKey, MajorOrMinor, "into", chanKey )
+                    votesCopy.update({  'ProposingPlayer':pid,
+                                        'Suber':f"Proposal {suberKey}'s SUBER: Suber {self.Data['Subers'][suberKey][MajorOrMinor]['Party']} Whip:",
+                                        'ProposingText':                          str(self.Data['Subers'][suberKey][MajorOrMinor]['Proposal']),
+                                        'Proposal#':self.Data['Proposal#'], 
+                                        'SuberKey':suberKey,
+                                        'VotingEnabled': True
+                                    })
+                    self.Data['Proposal#'] =+ 1
+                    self.Tasks.update(set([
+                        self.set_data(['Subers',suberKey,MajorOrMinor,'File'],       ''),
+                        self.set_data(['Subers',suberKey,MajorOrMinor,'Supporters'], []),
+                        self.set_data(['Subers',suberKey,MajorOrMinor,'Proposal'],   ''),
+                        self.set_data(['Subers',suberKey,MajorOrMinor,'DOB'],        self.now())
+                    ]))
+                    self.Tasks.add( self.set_data([chanKey], votesCopy ) )
+                    print('   |   - PopProposal To Suber: ',suberKey, MajorOrMinor)
+                    self.Tasks.add( enableVoting(self, channelKey = chanName) )
+                    break
+                        
+        # Haymakers
+        elif len(sliceQueue) == 0 and len(sliceArray) == 0 and len(sliceHaymaker) > 0:
+            pid, name = sliceHaymaker.pop(0)
+            print(pid, name)
+            nActivePlayers = len(self.Refs['roles']['Player'].members) - len(self.Refs['roles']['Inactive'].members)
+            if len(self.Data['PlayerData'][pid]["DI's"][ name ]['File']) > 1 \
+               and len(self.Data['PlayerData'][pid]["DI's"][ name ]['Supporters']) > 0.3 * nActivePlayers: 
+                print('   |   - Popping Proposal: ', self.Data['PlayerData'][pid]['Name'])
+
+                self.Tasks.add( self.Refs['players'][pid].add_roles( self.Refs['roles']['On Deck']) )
+                
+                votesCopy.update({ 'ProposingPlayer':pid,
+                                   'ProposingText':str(self.Data['PlayerData'][pid]["DI's"][ name ]['File']),
+                                   'Proposal#':self.Data['Proposal#'],
+                                   'Haymaker':name})
+                self.Data['Proposal#'] += 1
+                self.Tasks.add( self.Mods.haymakerRule.removeDI(self,pid, name) )
+                self.Tasks.add( self.set_data([chanKey], votesCopy ) )
+                self.Tasks.add( enableVoting(self, channelKey = chanName) )
+                gotProp = True
+                await self.Refs['channels']['game'].send("<@250132828950364174> does the wording of this proposal have your certified Daniel seal of approval?")
+        else:
+            self.Tasks.add( disableVoting(self, channelKey = chanName) )
+
+                
     # Doom Proposal
-    if not gotProp:
-        print('   |   - No Proposal In Queue')
-        votesCopy = { 'Yay':[], 'Nay':[], 'Abstain':[], 'ProposingMSGs':[], 'ProposingPlayer':"DOOM",
-                            'ProposingText':str("A Doom Proposal Shall Be Determined By Mods"),
-                            'Proposal#':self.Data['Proposal#']}
-        self.Data['Proposal#'] += 1 
+    if gotProp:
         self.schedule(
             name = 'Enable Voting', 
             function = enableVoting, 
@@ -224,10 +346,20 @@ async def popProposal(self, payload = None):
         )
         self.updateSchedule('End Of Turn', delta = self.day)
     else:
+        print('   |   - No Proposal In Queue')
+        votesCopy.update({ 'ProposingPlayer':"DOOM",
+                           'ProposingText':str("A Doom Proposal Shall Be Determined By Mods"),
+                           'Proposal#':self.Data['Proposal#']})
+        self.Data['Proposal#'] += 1 
+        self.schedule(
+            name = 'Enable Voting', 
+            function = enableVoting, 
+            parameter = 'Day',
+            nextTime = self.Data['Day'] + 1,
+            interval = None
+        )
+        self.updateSchedule('End Of Turn', delta = self.day)
         await self.Refs['channels']['game'].send("<@250132828950364174> does the wording of this proposal have your certified Daniel seal of approval?")
-
-    self.Tasks.add( self.set_data(['Votes'], votesCopy ) )
-    self.Tasks.add( self.set_data(['VotingEnabled'], False ) )
 
     await updateProposal(self)
     await create_queue(self)
@@ -296,7 +428,6 @@ async def on_reaction(self, payload):
         else: return
     
         self.Mods.inactivityRule.forceActivate(self, payload['user'].id)
-        await create_queue(self.Data, payload)
 
     if payload['Channel'] == 'queue' and payload['mode'] == 'add':
         await payload['message'].remove_reaction(payload['emoji'] , payload['user'])
@@ -347,10 +478,11 @@ Main Run Function On Messages (Done)
 async def on_message(self, payload):
     isInactive = self.Refs['players'][payload['raw'].author.id].get_role(self.Refs['roles']['Inactive'].id) is not None
 
-    if payload['Channel'] in ['voting',]:
+    if payload['Channel'] in channelMap.keys():
+        chanKey = payload['Channel']
 
         # Remove MSG if from a non Player (Bot, Illegal, Etc)
-        if payload['Author ID'] not in self.Data['PlayerData'] or not self.Data['VotingEnabled']:
+        if payload['Author ID'] not in self.Data['PlayerData'] or not self.Data[channelMap[payload['Channel']]]['VotingEnabled']:
             print('   |   Voting Removing', payload['Content'])
             await payload['raw'].delete()
             return
@@ -367,11 +499,11 @@ async def on_message(self, payload):
         if vote in yayVotes:
             await yay(self, payload)
             await payload['raw'].add_reaction('✔️')
-            await self.Mods.suitsRule.rewardMethod(self,payload['Author ID'], 'Vote')
+            await self.Mods.suitsRule.rewardMethod(self,payload['Author ID'], chanKey)
         elif vote in nayVotes:
             await nay(self, payload)
             await payload['raw'].add_reaction('✔️')
-            await self.Mods.suitsRule.rewardMethod(self,payload['Author ID'], 'Vote')
+            await self.Mods.suitsRule.rewardMethod(self,payload['Author ID'], chanKey)
         elif vote in abstainVotes:
             await abstain(self, payload)
             await payload['raw'].add_reaction('✔️')
@@ -401,38 +533,46 @@ async def on_message(self, payload):
 
     if payload['Channel'] == 'deck-edits':
         print('   |   Updating Deck Proposal')
-        if self.Data['VotingEnabled'] == True: 
-            await self.Refs['channels']['deck-edits'].send("The deck cannot be updated at this time in the turn.")
-            return
-        if payload['Author ID'] != self.Data['Votes']['ProposingPlayer']: 
-            await self.Refs['channels']['deck-edits'].send("You are not the proposer. This message will be ignored.")
-            return
+        votingChans = []
+        for chanName, chanKey in channelMap.items():
+            if payload['Author ID'] == self.Data[chanKey]['ProposingPlayer'] \
+            and not self.Data[chanKey]['VotingEnabled']: 
+                votingChans.append(chanKey)
 
-        if len(payload['Attachments']) == 1 and '.txt' in list(payload['Attachments'].keys())[0]:
-            decoded = await list(payload['Attachments'].values())[0].read()
-            decoded = decoded.decode(encoding="utf-8", errors="strict")
-            self.Data['Votes']['ProposingText'] = decoded
+        if len(votingChans) == 0:
+            await self.Refs['channels']['deck-edits'].send("There are no decks can be edited by you at this time in the turn.")
+            return
+        if len(votingChans) == 1:
+            votingChan = votingChans[0]
 
-        if len(payload['Attachments']) == 0:
-            self.Data['Votes']['ProposingText'] = payload['Content']
+            if len(payload['Attachments']) == 1 and '.txt' in list(payload['Attachments'].keys())[0]:
+                decoded = await list(payload['Attachments'].values())[0].read()
+                decoded = decoded.decode(encoding="utf-8", errors="strict")
+                self.Data[votingChan]['ProposingText'] = decoded
+            if len(payload['Attachments']) == 0:
+                self.Data[votingChan]['ProposingText'] = payload['Content']
         await updateProposal(self)
  
     if payload['Channel'] == 'emergency-deck-edits':
         print('   |   Updating E. Deck Proposal')
-        if self.Data['VotingEnabled'] == False: 
-            await self.Refs['channels']['deck-edits'].send("The emergency-deck cannot be updated at this time in the turn.")
-            return
-        if payload['Author ID'] != self.Data['Votes']['ProposingPlayer']: 
-            await self.Refs['channels']['deck-edits'].send("You are not the proposer. This message will be ignored.")
-            return
+        votingChans = []
+        for chanName, chanKey in channelMap.items():
+            if payload['Author ID'] == self.Data[chanKey]['ProposingPlayer'] \
+            and self.Data[chanKey]['VotingEnabled']: 
+                votingChans.append(chanKey)
 
-        if len(payload['Attachments']) == 1 and '.txt' in list(payload['Attachments'].keys())[0]:
-            decoded = await list(payload['Attachments'].values())[0].read()
-            decoded = decoded.decode(encoding="utf-8", errors="strict")
-            self.Data['Votes']['ProposingText'] = decoded
+        if len(votingChans) == 0:
+            await self.Refs['channels']['emergency-deck-edits'].send("There are no decks that can be edited by you at this time in the turn.")
+            return
+        if len(votingChans) == 1:
+            votingChan = votingChans[0]
 
-        if len(payload['Attachments']) == 0:
-            self.Data['Votes']['ProposingText'] = payload['Content']
+            if len(payload['Attachments']) == 1 and '.txt' in list(payload['Attachments'].keys())[0]:
+                decoded = await list(payload['Attachments'].values())[0].read()
+                decoded = decoded.decode(encoding="utf-8", errors="strict")
+                self.Data[votingChan]['ProposingText'] = decoded
+            if len(payload['Attachments']) == 0:
+                self.Data[votingChan]['ProposingText'] = payload['Content']
         await updateProposal(self)
 
 
