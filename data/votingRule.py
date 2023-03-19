@@ -91,7 +91,7 @@ async def bot_tally(self):
                 ))
             
                 await self.Refs['channels']['actions'].send(
-                    f"**A SUBER has been formed! \n" \
+                    f"**A SUBER has been formed! **\n" \
                     f"   Assenters:  {' '.join([f'<@{pid}>' for pid in self.Data[chanKey]['Yay'] ])}\n\n" \
                     f"   Dissenters: {' '.join([f'<@{pid}>' for pid in self.Data[chanKey]['Nay'] ])}\n\n"
                 )
@@ -330,7 +330,7 @@ async def popProposal(self, payload = None):
                 self.Tasks.add( self.set_data([chanKey], votesCopy ) )
                 self.Tasks.add( enableVoting(self, channelKey = chanName) )
                 gotProp = True
-                await self.Refs['channels']['game'].send("<@250132828950364174> does the wording of this proposal have your certified Daniel seal of approval?")
+                #await self.Refs['channels']['game'].send("<@250132828950364174> does the wording of this proposal have your certified Daniel seal of approval?")
         else:
             self.Tasks.add( disableVoting(self, channelKey = chanName) )
 
