@@ -443,6 +443,8 @@ async def on_reaction(self, payload):
             if payload['user'].id not in self.Data['PlayerData'][author]['Proposal']['Supporters']:
                 self.Data['PlayerData'][author]['Proposal']['Supporters'].append(payload['user'].id)
             updateQueue = True
+            # Attempt to become active
+            await self.Mods.inactivityRule.activateOnEndorse(self, payload['user'].id)
         elif payload['emoji'] == '👎':
             if payload['user'].id in self.Data['PlayerData'][author]['Proposal']['Supporters']:
                 self.Data['PlayerData'][author]['Proposal']['Supporters'].remove(payload['user'].id)
@@ -465,8 +467,6 @@ async def on_reaction(self, payload):
             await self.send(payload['user'],msg)
         else: return
 
-        # Attempt to become active
-        await self.Mods.inactivityRule.activateOnEndorse(self, payload['user'].id)
 
         # Update is things Changed
         if updateQueue: await create_queue(self)
