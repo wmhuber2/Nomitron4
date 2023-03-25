@@ -28,7 +28,7 @@ async def challenge(self, payload):
     message = payload['raw']
 
     if self.Data['PlayerData'][pid]['Challanged']: 
-        await message.channel.send(f"-  You must wait until next week to challange again")
+        await message.channel.send(f"-  You must wait until next week to challenge again")
         return
     
     if pid == self.Data['Gladiator']['Player']: 

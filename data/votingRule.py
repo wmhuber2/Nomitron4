@@ -34,6 +34,8 @@ nayVotes  = ["nay", "no", "n", "nah", "nein", "sus", "cringe", "soggy"]
 abstainEmojis = []
 abstainVotes  = ['abstain', 'withdraw']
 
+suberEmojis = ['♻️',]
+
 
 # schedule (Done)
 async def bot_tally(self):
@@ -49,9 +51,21 @@ async def bot_tally(self):
 
         if not isDoom: player = self.Data['PlayerData'][ self.Data[chanKey]['ProposingPlayer'] ]['Name']
 
+       
         votingPlayers = len(self.Data[chanKey]['Yay']) + len(self.Data[chanKey]['Nay'])
         activePlayers = len(self.Refs['roles']['Player'].members) - len(self.Refs['roles']['Inactive'].members)
+        subersPlayers = -1
         losers        = None
+
+        chan = self.Refs['channels'].get(chanName)
+        mid, line = self.Data[chanKey]['ProposingMSGs'][-1]
+        try:  
+            msg = await chan.fetch_message(mid)
+            for emoji in msg.reactions:
+                if str(emoji.emoji) in suberEmojis:
+                    subersPlayers += emoji.count 
+        except Exception as e:  print('Error: Lost Voting MSG in Bot-Count', e)
+
 
 
         # Tally Main Voting ( Nomitron 4 Safe)
@@ -70,9 +84,10 @@ async def bot_tally(self):
 
         # Form SUBERS if necassary
         if not isSuber and not isHaymaker:
-            print('   |   - SUBER', len(self.Data[chanKey][losers[1]]) , votingPlayers, activePlayers)
+            print('   |   - SUBER', len(self.Data[chanKey][losers[1]]) , votingPlayers, activePlayers, subersPlayers)
             if votingPlayers == 0: return
-            if len(self.Data[chanKey][losers[1]])  >= 0.2 * votingPlayers and (activePlayers <= 2 * votingPlayers):
+            if (activePlayers <= 2 * votingPlayers) and (subersPlayers >= 0.2 * votingPlayers):
+                #if len(self.Data[chanKey][losers[1]])  >= 0.2 * votingPlayers and (activePlayers <= 2 * votingPlayers):
                 self.Tasks.add(
                     self.set_data(['Subers',self.Data[chanKey]['Proposal#']], {
                         'Proposal#' : self.Data[chanKey]['Proposal#'],
@@ -172,6 +187,10 @@ async def updateProposal(self):
             for line in lines:
                 msg = await chan.send(line)
                 self.Data[chanKey]['ProposingMSGs'].append([msg.id, line])
+            
+            if  self.Data[chanKey].get(   'Suber') is None \
+                and self.Data[chanKey].get('Haymaker') is None:
+                for e in suberEmojis: await msg.add_reaction(e)
 
         for i in range(len(self.Data[chanKey]['ProposingMSGs'])): 
             if isinstance(self.Data[chanKey]['ProposingMSGs'][i], int):
