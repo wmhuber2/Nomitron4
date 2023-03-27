@@ -7,7 +7,7 @@ async def gom(self, payload):
 
     if self.Data['PlayerData'][player.id].get('Gom Jammer Test') not in [None, "Not Taken"]:
         await payload['raw'].channel.send("You have already taken the test this week.")
-        #return
+        return
 
     sleep(5)
     await payload['raw'].channel.send("Your test has begun.")
