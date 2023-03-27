@@ -28,12 +28,12 @@ async def gom(self, payload):
     print('Endloop')
     if numpy.random.randint(1, 101, 1) > 85 or self.Data['PlayerData'][player.id]['Gom Jammer Test'] == "Failed":
         self.Data['PlayerData'][player.id]['Gom Jammer Test'] = "Failed"
-        await payload['raw'].channel.send("Your test has ended. You have failed.")
+        await payload['raw'].channel.send(f"{self.Data['PlayerData'][player.id]['Name']} test has ended. You have failed.")
         await self.Mods.emojiRule.addEmoji(self, player.id, '💉' )
         return
     if self.Data['PlayerData'][player.id]['Gom Jammer Test'] == "In Progress":
         self.Data['PlayerData'][player.id]['Gom Jammer Test'] = "Passed"
-        await payload['raw'].channel.send("Your test has ended. You have passed.")
+        await payload['raw'].channel.send(f"{self.Data['PlayerData'][player.id]['Name']} test has ended. You have passed.")
         await self.Mods.emojiRule.addEmoji(self, player.id, '🤸' )
         return
     
