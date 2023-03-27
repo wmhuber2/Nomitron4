@@ -81,6 +81,16 @@ async def setup(self):
         interval = self.week
     )
 
+    gomStart = self.time(dayStart.year, dayStart.month, 6)
+    while gomStart + self.week < self.now():  gomStart += self.week
+    self.schedule(
+        name = 'Reset Gom Jammer', 
+        function = self.Mods.gomJammerRule.resetGoms, 
+        parameter = 'Time',
+        nextTime = gomStart + self.week,
+        interval = self.week
+    )
+
 async def onDayEnd(self):
     print('   |   END OF DAY', self.Data['Day'])
     await incrementDay(self)

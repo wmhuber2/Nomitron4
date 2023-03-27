@@ -40,7 +40,8 @@ async def giveDI(self, payload):
         await payload['raw'].add_reaction('✔️')
 
 async def removeDI(self, pid, name):
-    del self.Data['PlayerData'][pid]["DI's"][name]
+    try: del self.Data['PlayerData'][pid]["DI's"][name]
+    except: pass
 
 # funtion (Done)
 def proposalText(self, voteChan):

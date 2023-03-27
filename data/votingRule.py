@@ -36,7 +36,6 @@ abstainVotes  = ['abstain', 'withdraw']
 
 suberEmojis = ['♻️',]
 
-
 # schedule (Done)
 async def bot_tally(self):
     # Tally Main Voting Queue

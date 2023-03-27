@@ -6,7 +6,6 @@ import logging
 from functools import reduce 
 import operator
 
-
 botCommandChar = '!'
 path = "/usr/src/app/"
 savefile = 'DiscordBot_Data.yml'
@@ -119,6 +118,9 @@ class DiscordNomicBot():
 
         @self.client.event
         async def on_raw_reaction_remove(reaction): await self.on_raw_reaction(reaction, 'remove')
+
+        @self.client.event
+        async def on_raw_typing(event): await self.on_raw_typing(event)
 
         self.client.run(self.token, reconnect=True, log_handler=None)
 
@@ -494,6 +496,31 @@ class DiscordNomicBot():
         print("Going For Restart...")
         sys.exit(0)
 
+
+    """
+    Member typing start (Updated to Nomitron 4)
+    """
+    async def on_raw_typing(self, payload):
+        if payload.user_id == self.client.user.id: return
+        if self.serverid != payload.guild_id: return
+        if self.Refs['players'].get(payload.user_id) is None: return
+        if self.Refs['players'][payload.user_id].get_role(self.Refs['roles'][self.playerRole].id) is None: return
+
+        user    = self.Refs['players'][payload.user_id]
+        channel = self.client.get_channel(payload.channel_id)
+        start   = payload.timestamp
+        if channel is None:  return
+       
+        # Create Payload
+        typingPayload = {}
+        typingPayload['time']    = start
+        typingPayload['raw']     = payload
+        typingPayload['Channel'] = channel
+        typingPayload['user']    = user
+        typingPayload['name']    = user.name + '#' + user.discriminator
+
+        await self.passToModule('on_typing', typingPayload)
+        self.saveData()
 
     """
     Save Memory Data From File (Updated to Nomitron 4)
