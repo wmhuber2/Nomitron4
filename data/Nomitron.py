@@ -345,7 +345,7 @@ class DiscordNomicBot():
                     raise e
         try:await asyncio.gather( *toDo )
         except self.discord.errors.HTTPException: 
-            print(f'!!! HTTP Error In Module: {name} {function}!!!')
+            print(f'!!! HTTP Error In Module: Gathering {function}!!!')
         except Exception as e: 
             print(f'!!! Error In Module: {name} {function} {e}!!!')
             raise e
