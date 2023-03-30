@@ -20,7 +20,7 @@ async def resetChallenges(self, payload = None):
 async def gladiatorPointCheck(self):
     if  self.Data['Gladiator']['Player'] not in ['', None] and self.Data['Gladiator']['DOB'] + 1 == self.Data['Turn']:
         self.Data['Gladiator']['DOB'] += 1
-        self.Data['PlayerData'][self.Data['Gladiator']['Player']]['Friendship Tokens'] += 1
+        await self.Mods.tokensRules.addTokens(self, self.Data['Gladiator']['Player'], 1)
 
 # Command
 async def challenge(self, payload): 

@@ -534,9 +534,9 @@ class DiscordNomicBot():
         with open(path + savefile, 'w') as handle: yaml.dump(self.Data, handle)
 
         list_of_files = glob.glob(path + 'Backups/*')
-        sorted(list_of_files, key=os.path.getctime)
+        sorted(list_of_files, key=os.path.basename)
         for full_path in list_of_files[max([1000 - len(list_of_files), -1]): ]:
-            print('   Removing:',full_path.split('/')[-1])
+            print('   Removing:',full_path.split('/')[0])
             os.remove(full_path)
         
 
@@ -545,7 +545,7 @@ class DiscordNomicBot():
     """
     def loadData(self):
         list_of_files = glob.glob(path + 'Backups/*')
-        sorted(list_of_files, key=os.path.getctime)
+        sorted(list_of_files, key=os.path.basename)
         newData = None
         if os.path.isfile(path + savefile):
             with open(path + savefile, 'r') as handle:

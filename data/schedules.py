@@ -91,6 +91,16 @@ async def setup(self):
         interval = self.week
     )
 
+    matterStart = self.time(dayStart.year, dayStart.month, 6)
+    while matterStart + self.week < self.now():  matterStart += self.week
+    self.schedule(
+        name = 'Reset Matter Baby', 
+        function = self.Mods.matterRule.tallyMatter, 
+        parameter = 'Time',
+        nextTime = matterStart + self.week,
+        interval = self.week
+    )
+
 async def onDayEnd(self):
     print('   |   END OF DAY', self.Data['Day'])
     await incrementDay(self)

@@ -21,7 +21,7 @@ async def invest(self,payload):
     else:
         self.Data['PlayerData'][pid]['ClockMarket']['Ballance'] += amount
         self.Data['PlayerData'][pid]['ClockMarket']['Invest Limit'] -= amount
-        self.Data['PlayerData'][pid]['Friendship Tokens'] -= amount
+        await self.Mods.tokensRules.addTokens(self, pid, -amount)
         await msg.add_reaction('✔️')
     
 async def withdraw(self,payload):
@@ -45,7 +45,7 @@ async def withdraw(self,payload):
         await msg.channel.send("You cannot withdraw a negative amount.")
     else:
         self.Data['PlayerData'][pid]['ClockMarket']['Ballance'] -= amount
-        self.Data['PlayerData'][pid]['Friendship Tokens'] += amount
+        await self.Mods.tokensRules.addTokens(self, pid, amount)
 
         self.Data['PlayerData'][pid]['ClockMarket']['Ballance'] = int(self.Data['PlayerData'][pid]['ClockMarket']['Ballance'])
         await msg.add_reaction('✔️')

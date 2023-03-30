@@ -24,7 +24,7 @@ async def tally_buds(self):
             else: allSame = False
         if allSame:
             for b in bud: 
-                self.Data['PlayerData'][b]['Friendship Tokens'] += 1
+                self.Tasks.add( self.Mods.tokensRules.addTokens(self, b, 1) )
                 self.Tasks.add( self.Mods.suitsRule.rewardMethod(self, b, 'Buddy') )
 
 # Weekly Schedule

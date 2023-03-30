@@ -379,8 +379,8 @@ async def popProposal(self, payload = None):
         self.updateSchedule('End Of Turn', delta = self.day)
         await self.Refs['channels']['game'].send("<@250132828950364174> does the wording of this proposal have your certified Daniel seal of approval?")
 
-    self.Tasks.add( updateProposal(self) )
-    self.Tasks.add( create_queue(self) )
+    #self.Tasks.add( updateProposal(self) )
+    #self.Tasks.add( create_queue(self) )
 
 # command (Done)
 async def yay(self, payload):

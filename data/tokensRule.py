@@ -31,3 +31,6 @@ async def give(self, payload):
 
     self.Data['PlayerData'][pid]['Friendship Tokens'] += 1
     self.Data['PlayerData'][payload['Author ID']]['Friendship Tokens'] -= 1
+
+async def addTokens(self, pid, n):
+    self.Data['PlayerData'][pid]['Friendship Tokens'] += n

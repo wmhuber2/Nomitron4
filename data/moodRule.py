@@ -69,7 +69,8 @@ async def engage(self, payload):
     if offering >= 6:
         await payload['raw'].channel.send("Too much money.")
         return
-    self.Data['PlayerData'][payload['Author ID']]['Friendship Tokens'] -= offering
+    
+    await self.Mods.tokensRules.addTokens(self, payload['Author ID'], -offering)
     tempset = list(moods)
     tempset.remove(moods[self.Data['Mood']])
     for i in range(offering): tempset.pop(random.randint(0,len(tempset)-1))
