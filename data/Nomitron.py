@@ -151,6 +151,8 @@ class DiscordNomicBot():
             self.Data['NextTurnStartTime'] = dayStart
         if 'Haymaker' not in self.Data:    
             self.Data['Haymaker'] = []
+        if 'Old Matter Votes' not in self.Data:    
+            self.Data['Old Matter Votes'] = {}
             
         if isinstance(self.Data['CurrTurnStartTime'], int):
             self.Data['CurrTurnStartTime'] = datetime.datetime.fromtimestamp(self.Data['CurrTurnStartTime'], pytz.timezone('US/Central'))
@@ -536,7 +538,6 @@ class DiscordNomicBot():
         list_of_files = glob.glob(path + 'Backups/*')
         sorted(list_of_files, key=os.path.basename)
         for full_path in list_of_files[max([1000 - len(list_of_files), -1]): ]:
-            print('   Removing:',full_path.split('/')[0])
             os.remove(full_path)
         
 
