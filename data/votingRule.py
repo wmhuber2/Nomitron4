@@ -306,8 +306,7 @@ async def popProposal(self, payload = None):
                 MajorOrMinor = list(sorted( [(suberKey, 'Assenter'), (suberKey, 'Dissenter')], key=keySortSub))[0][-1]
                 print('MM',MajorOrMinor)
                 pid  = self.Data['Subers'][suberKey][MajorOrMinor]['Whip']
-                if len(self.Data['Subers'][suberKey][MajorOrMinor]['Proposal']) > 1 \
-                    and self.Data[chanKey]['ProposingPlayer'] is not None: 
+                if len(self.Data['Subers'][suberKey][MajorOrMinor]['Proposal']) > 1:
                     print("   |   Pop Suber", pid, suberKey, MajorOrMinor, "into", chanKey )
                     votesCopy.update({  'ProposingPlayer':pid,
                                         'Suber':f"Proposal {suberKey}'s SUBER: Suber {self.Data['Subers'][suberKey][MajorOrMinor]['Party']} Whip:",
