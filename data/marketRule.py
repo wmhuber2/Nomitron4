@@ -55,8 +55,8 @@ async def payOffer(self, payload):
         payee = int(payload['message'].content.split('@')[2].split('>')[0])
         amount = int(payload['message'].content.split(' ')[-2])
 
-        await self.Mods.tokensRules.addTokens(self, payee,  amount)
-        await self.Mods.tokensRules.addTokens(self, payer, -amount)
+        await self.Mods.tokensRule.addTokens(self, payee,  amount)
+        await self.Mods.tokensRule.addTokens(self, payer, -amount)
         self.Data['PlayerData'][payer]['Offers'] -= amount
 
         await payload['message'].edit(content=f"<@{payer}>'s Offer Has Been Accepted and Completed By <@{payee}> for {amount} Tokens")

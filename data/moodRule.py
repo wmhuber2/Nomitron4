@@ -70,7 +70,7 @@ async def engage(self, payload):
         await payload['raw'].channel.send("Too much money.")
         return
     
-    await self.Mods.tokensRules.addTokens(self, payload['Author ID'], -offering)
+    await self.Mods.tokensRule.addTokens(self, payload['Author ID'], -offering)
     tempset = list(moods)
     tempset.remove(moods[self.Data['Mood']])
     for i in range(offering): tempset.pop(random.randint(0,len(tempset)-1))

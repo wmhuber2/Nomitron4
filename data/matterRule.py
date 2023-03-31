@@ -48,13 +48,13 @@ async def tallyMatter(self, payload = None):
     elif len(cake) == len(sandwich):
         await self.Refs['channels']['actions'].send("- Matter Baby Winners are CAKE + SANDWICH")
         for pid in sandwich: 
-            self.Tasks.add( self.Mods.tokensRules.addTokens(self, pid, 1) )
+            self.Tasks.add( self.Mods.tokensRule.addTokens(self, pid, 1) )
         for pid in cake: 
             self.Tasks.add( self.Mods.emojiRule.addEmoji(self, pid, '🧠' ) )
     elif len(sandwich) == len(salad):
         await self.Refs['channels']['actions'].send("- Matter Baby Winners are SALAD + SANDWICH")
         for pid in sandwich: 
-            self.Tasks.add( self.Mods.tokensRules.addTokens(self, pid, 1) )
+            self.Tasks.add( self.Mods.tokensRule.addTokens(self, pid, 1) )
         for pid in salad: 
             self.Tasks.add( self.Mods.emojiRule.addEmoji(self, pid, '🧠' ) )
     elif len(salad) == len(cake):
@@ -85,7 +85,7 @@ async def on_reaction(self, payload):
                 self.Tasks.add( self.Mods.emojiRule.addEmoji(self, pid, '🧠' ) )
         elif payload['emoji'] == '🇦':            
             for pid in self.Data['Old Matter Votes'][payload['msg'].id]['tie']: 
-                self.Tasks.add( self.Mods.tokensRules.addTokens(self, pid, -1) )
+                self.Tasks.add( self.Mods.tokensRule.addTokens(self, pid, -1) )
         else: return
 
         del self.Data['Old Matter Votes'][payload['msg'].id]
