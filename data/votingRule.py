@@ -89,7 +89,7 @@ async def bot_tally(self):
                 #if len(self.Data[chanKey][losers[1]])  >= 0.2 * votingPlayers and (activePlayers <= 2 * votingPlayers):
                 self.Tasks.add(
                     self.set_data(['Subers',self.Data[chanKey]['Proposal#']], {
-                        'Proposal#' : self.Data[chanKey]['Proposal#'],
+                        'Proposal#' : int(self.Data[chanKey]['Proposal#']),
                         'Assenter': {
                             'Members':self.Data[chanKey]['Yay'], 'Is Official': False, 'Whip' : [],
                             'Proposal' : "", 'Supporters' : [],'DOB' : self.now(),
@@ -286,7 +286,7 @@ async def popProposal(self, payload = None):
                 
                 votesCopy.update({ 'ProposingPlayer':pid,
                                    'ProposingText':str(self.Data['PlayerData'][pid]['Proposal']['File']),
-                                   'Proposal#':self.Data['Proposal#']})
+                                   'Proposal#': int(self.Data['Proposal#'])})
                 self.Data['Proposal#'] += 1
                 self.Tasks.update(set([
                     self.set_data(['PlayerData',pid,'Proposal','File'],       ''),
@@ -311,7 +311,7 @@ async def popProposal(self, payload = None):
                     votesCopy.update({  'ProposingPlayer':pid,
                                         'Suber':f"Proposal {suberKey}'s SUBER: Suber {self.Data['Subers'][suberKey][MajorOrMinor]['Party']} Whip:",
                                         'ProposingText':                          str(self.Data['Subers'][suberKey][MajorOrMinor]['Proposal']),
-                                        'Proposal#':self.Data['Proposal#'], 
+                                        'Proposal#':int(self.Data['Proposal#']), 
                                         'SuberKey':suberKey,
                                         'VotingEnabled': True
                                     })
@@ -340,7 +340,7 @@ async def popProposal(self, payload = None):
                 
                 votesCopy.update({ 'ProposingPlayer':pid,
                                    'ProposingText':str(self.Data['PlayerData'][pid]["DI's"][ name ]['File']),
-                                   'Proposal#':self.Data['Proposal#'],
+                                   'Proposal#':int(self.Data['Proposal#']),
                                    'Haymaker':name})
                 self.Data['Proposal#'] += 1
                 self.Tasks.add( self.Mods.haymakerRule.removeDI(self,pid, name) )
@@ -366,7 +366,7 @@ async def popProposal(self, payload = None):
         print('   |   - No Proposal In Queue')
         votesCopy.update({ 'ProposingPlayer':"DOOM",
                            'ProposingText':str("A Doom Proposal Shall Be Determined By Mods"),
-                           'Proposal#':self.Data['Proposal#']})
+                           'Proposal#':int(self.Data['Proposal#'])})
         self.Data['Proposal#'] += 1 
         self.schedule(
             name = 'Enable Voting', 

@@ -107,14 +107,13 @@ async def updateRules(self):
         print(f'   |   Found {len(ruletxt)} Rules')
         for rule in ruletxt:
             rule = rule.replace('\n',' \n')
-            if 1:#try:
+            try:
                 #rule = rule.strip().split('\n\n',1)
                 rulenum = rule.split(' ')[0]
                 rulenum = int(rulenum)
                 self.Data['RuleList'][rulenum] = rule
-            try: pass
             except:
-                print('ERROR')
+                print('ERROR Importing Rules.')
                 print(rule)
 
 
