@@ -77,9 +77,9 @@ class DiscordNomicBot():
 
         try:
             self.discord    = importlib.import_module('discord')
-            self.discord.utils.setup_logging(level=logging.ERROR, root=False)
+            #self.discord.utils.setup_logging(level=logging.ERROR, root=False)
             self.loop       = asyncio.new_event_loop()
-            self.client     = self.discord.Client(loop = self.loop, heartbeat_timeout=120, intents=self.discord.Intents.all())
+            self.client     = self.discord.Client(loop = self.loop, heartbeat_timeout=60*10, intents=self.discord.Intents.all())
             self.clientid   = None
             self.token      = open(path+'token.secret','r').readlines()[0].strip()
             if self.token[-4:] != '_OL0': 
@@ -346,10 +346,10 @@ class DiscordNomicBot():
                     print(f'!!! Error In Module: {name} {function} {e}!!!')
                     raise e
         try:await asyncio.gather( *toDo )
-        except self.discord.errors.HTTPException: 
-            print(f'!!! HTTP Error In Module: Gathering {function}!!!')
+        #except self.discord.errors.HTTPException: 
+        #    print(f'!!! HTTP Error In Module: Gathering {function}!!!')
         except Exception as e: 
-            print(f'!!! Error In Module: {name} {function} {e}!!!')
+            print(f'!!! Error In Module: {function} {e}!!!')
             raise e
 
         
@@ -392,12 +392,14 @@ class DiscordNomicBot():
         #######################################################################
         # Create Channels For Game State
         #
+        print("      Creating Channel Map")
         if self.Refs['category'].get("Game-Data") is None:
             print('   Adding Game-Data Category')
             category = await self.server.create_category("Game-Data")
             self.Refs['category']['Game-Data']= channel
 
-        self.loadData()
+        print('      Loading Data')
+        await self.loadData()
         await self.passToModule('setup')
         print('   Setup Finished!')
 
@@ -409,9 +411,9 @@ class DiscordNomicBot():
             self.Data['lastAlive'] = datetime.datetime.now()
 
             startTime = self.now()
-            while self.now() - startTime < self.minute/2:
+            while self.now() - startTime < self.minute:
                 await self.checkSchedule()
-                await asyncio.sleep(2)
+                await asyncio.sleep(5)
                 self.Data['Time'] = self.now()
 
             await self.passToModule('update')
@@ -419,7 +421,8 @@ class DiscordNomicBot():
             except Exception as e: print('ERROR:', e)
             try:await self.runTasks()
             except Exception as e: print('ERROR:', e)
-            self.saveData()
+            await self.saveData()
+        print('Exit of Loop')
 
 
     """
@@ -448,7 +451,7 @@ class DiscordNomicBot():
             await self.passToModule('on_message', payload)
             await self.runTasks()
         
-        self.saveData()
+        await self.saveData()
 
 
     """
@@ -486,7 +489,7 @@ class DiscordNomicBot():
             await msg.remove_reaction(str('🔄'), user)
             await self.on_message(msg)
 
-        self.saveData()
+        await self.saveData()
 
 
     """
@@ -494,7 +497,7 @@ class DiscordNomicBot():
     """
     async def on_member_join(self, member):
         await self.passToModule('on_member_join', member)
-        self.saveData()
+        await self.saveData()
         print("Going For Restart...")
         sys.exit(0)
 
@@ -522,12 +525,12 @@ class DiscordNomicBot():
         typingPayload['name']    = user.name + '#' + user.discriminator
 
         await self.passToModule('on_typing', typingPayload)
-        self.saveData()
+        await self.saveData()
 
     """
     Save Memory Data From File (Updated to Nomitron 4)
     """
-    def saveData(self):
+    async def saveData(self):
         #print('   -----SAVING-----')
         self.Data['lastAlive'] = datetime.datetime.now()
         if self.now() - self.lastSaveTime > datetime.timedelta(minutes=10):
@@ -544,7 +547,7 @@ class DiscordNomicBot():
     """
     Load Memory Data From File (Updated to Nomitron 4)
     """
-    def loadData(self):
+    async def loadData(self):
         list_of_files = glob.glob(path + 'Backups/*')
         sorted(list_of_files, key=os.path.basename)
         newData = None
@@ -565,7 +568,7 @@ class DiscordNomicBot():
             self.Data = dict(newData)
 
         self.updateData()
-        self.saveData()
+        await self.saveData()
 
 
     """
@@ -715,6 +718,7 @@ class DiscordNomicBot():
         self.lock = True
         await asyncio.gather( *toDo )
         await self.runTasks()
+        if len(toDoNames) > 0: print('   ---------------------')
         self.lock = False
 
 
@@ -731,7 +735,7 @@ class DiscordNomicBot():
         self.Data['lastAlive'] = datetime.datetime.now()
         if len(self.Tasks) > 0: await self.runTasks()
         print('   ----------------------------------')
-        self.saveData()
+        await self.saveData()
 
 
     """
