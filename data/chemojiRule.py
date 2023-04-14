@@ -62,7 +62,10 @@ async def mix(self, payload):
         await payload['raw'].add_reaction('❌')
         return
 
-    if self.Data.get('Emoji Recipes') is None: await createMap(self)
+    if self.Data.get('Emoji Recipes') is None: 
+        await payload['raw'].add_reaction('❌')
+        return
+        await createMap(self)
 
     self.Data['PlayerData'][ pid]['EmojiHold'].remove(emoji1)
     self.Data['PlayerData'][ pid]['EmojiHold'].remove(emoji2)

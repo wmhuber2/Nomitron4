@@ -196,6 +196,8 @@ class DiscordNomicBot():
             }
         if 'Time Created' in self.Data['Buddies']:
             del self.Data['Buddies']['Time Created']
+        if 'Emoji Recipes' in self.Data:
+            del self.Data['Emoji Recipes']
 
         for pid, player in self.Refs['players'].items():
             name = player.name + "#" + str(player.discriminator)
