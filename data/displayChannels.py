@@ -140,7 +140,8 @@ async def updatePlayer(self,pid):
         msgs[k]  = f"**{name}**:   {val}"
 
         msgs[k] = msgs[k].replace('-05:51','').replace('-05:00','').replace('-06:00','').replace('+05:00','')
-
+        if len(msgs[k]) > 1000:
+            msgs[k] = msgs[k][:1000]
     for k in sorted(msgs.keys()): toSend.append(msgs[k].strip())
 
     msgs = self.Data.get(f'{channelName}-MSGS')
