@@ -219,7 +219,8 @@ async def updateData(self):
         
         for pid in self.Data['PlayerData'].keys():
             msgs[k] = msgs[k].replace(str(pid), self.Data['PlayerData'][pid]['Name']).replace('-05:51','').replace('-06:00','').replace('-05:00','').replace('+05:00','')
-
+        if len(msgs[k]) > 1000:
+            msgs[k] = msgs[k][:1000]
     for k in sorted(msgs.keys()): toSend.append(msgs[k].strip())
 
     msgs = self.Data.get(f'{channelName}-MSGS')
