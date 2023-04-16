@@ -6,6 +6,10 @@
 async def green(self, payload):
     pid = payload['Author ID']
 
+    if self.Data['PlayerData'][pid].get('Union State') == 'Break':
+        await payload['raw'].add_reaction('❌')
+        return
+
     if payload.get('Author') in self.moderators and len(payload['Content'].split(' ')) > 1 : 
         playerid = payload['Content'].split(' ')[1]
         player = await self.getPlayer(playerid, payload)
@@ -31,6 +35,10 @@ async def green(self, payload):
 async def orange(self, payload,):
     pid = payload['Author ID']
 
+    if self.Data['PlayerData'][pid].get('Union State') == 'Break':
+        await payload['raw'].add_reaction('❌')
+        return
+
     if payload.get('Author') in self.moderators and len(payload['Content'].split(' ')) > 1 : 
         playerid = payload['Content'].split(' ')[1]
         player = await self.getPlayer(playerid, payload)
@@ -55,6 +63,10 @@ async def orange(self, payload,):
 # Command
 async def purple(self, payload):
     pid = payload['Author ID']
+    
+    if self.Data['PlayerData'][pid].get('Union State') == 'Break':
+        await payload['raw'].add_reaction('❌')
+        return
 
     if payload.get('Author') in self.moderators and len(payload['Content'].split(' ')) > 1 : 
         playerid = payload['Content'].split(' ')[1]

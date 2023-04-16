@@ -23,6 +23,11 @@ async def update(self):
 # Command
 async def nick(self, payload):
     print('   |  Setting Nick')
+
+    if self.Data['PlayerData'][payload['Author ID']].get('Union State') == 'Break':
+        await payload['raw'].add_reaction('❌')
+        return
+
     self.Data['PlayerData'][payload['Author ID']]['Nick'] = payload['Content'][6:]
     await payload['raw'].add_reaction('✔️')
     await updateEmojis(self)

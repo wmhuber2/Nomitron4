@@ -39,3 +39,46 @@ async def unionize(self, payload):
           "Union 3: "+ ' '.join([self.Refs['players'][p].mention for i in union3])+"\n" 
     await self.Refs['channels']['actions'].send(msg)
 
+
+
+    if 'Union Vote Counter' not in self.Data['PlayerData'][pid]:
+        self.Data['PlayerData'][pid]['Union Vote Counter' ]
+    self.Data['PlayerData'][pid]['Union Vote Counter'] = 0
+
+
+async def unionBreak(self,payload):
+    if payload.get('Author') not in self.moderators: return
+    playerid = payload['Content'].split(' ')[1]
+    player = await self.getPlayer(playerid, payload)
+    pid = player.id
+
+    if 'Union State' not in self.Data['PlayerData'][pid]:
+        self.Data['PlayerData'][pid]['Union State']
+    self.Data['PlayerData'][pid]['Union State'] = 'Will Be On Break'
+
+async def makeBreak(self, pid):
+    for pid in self.Data['PlayerData'].keys():
+        if self.Data['PlayerData'][pid]['Union State'] == 'Will Be On Break':
+            self.Data['PlayerData'][pid]['Union State'] = 'Break'
+            await self.Mods.tokensRule.addTokens(self, pid, 1)
+        else:
+            self.Data['PlayerData'][pid]['Union State'] = 'None'
+
+async def unionLunch(self,payload):
+    if payload.get('Author') not in self.moderators: return
+    playerid = payload['Content'].split(' ')[1]
+    player = await self.getPlayer(playerid, payload)
+    pid = player.id
+
+    if 'Union State' not in self.Data['PlayerData'][pid]:
+        self.Data['PlayerData'][pid]['Union State']
+    self.Data['PlayerData'][pid]['Union State'] = 'Lunch'
+
+async def unionVote(self,payload):
+    if payload.get('Author') not in self.moderators: return
+    playerid = payload['Content'].split(' ')[1]
+    try: toset = int(payload['Content'].split(' ')[2])
+    except ValueError: return
+    player = await self.getPlayer(playerid, payload)
+    pid = player.id
+    self.Data['PlayerData'][pid]['Union Vote Counter'] = toset

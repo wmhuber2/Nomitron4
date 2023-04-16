@@ -512,6 +512,11 @@ async def on_message(self, payload):
 
 
         # Register Vote
+
+        if self.Data['PlayerData'][payload['Author ID']].get('Union State') == 'Break':
+            await payload['raw'].add_reaction('❌')
+            return
+
         vote = payload['Content'].lower().strip()
         if vote in yayVotes:
             await yay(self, payload)
@@ -533,6 +538,11 @@ async def on_message(self, payload):
     if payload['Channel'] == 'proposals':
         print('   |   Saving Proposal', payload['Content'])
         pid = payload['Author ID']
+
+        if self.Data['PlayerData'][pid].get('Union State') == 'Break':
+            await payload['raw'].add_reaction('❌')
+            return
+
 
         if len(payload['Attachments']) == 1 and '.txt' in list(payload['Attachments'].keys())[0]:
             decoded = await list(payload['Attachments'].values())[0].read()

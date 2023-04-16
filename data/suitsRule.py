@@ -133,5 +133,6 @@ async def rewardMethod(self, pid, method):
             }
     if self.Data['PlayerData'][pid].get('Suits') is not None:
         if method in self.Data['PlayerData'][pid]['Ways To Get Exp']:
+            if method == 'Vote': self.Data['PlayerData'][pid]['Union Vote Counter'] += 1
             await addExp(self, pid,  self.Data['PlayerData'][pid]['Ways To Get Exp'][method])
             del self.Data['PlayerData'][pid]['Ways To Get Exp'][method]

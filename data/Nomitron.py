@@ -418,8 +418,8 @@ class DiscordNomicBot():
                 await asyncio.sleep(5)
                 self.Data['Time'] = self.now()
 
-            await self.passToModule('update')
-            try: pass
+            
+            try: await self.passToModule('update')
             except Exception as e: print('ERROR:', e)
             try:await self.runTasks()
             except Exception as e: print('ERROR:', e)
