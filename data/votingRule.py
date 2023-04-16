@@ -109,6 +109,10 @@ async def bot_tally(self):
                     f"   Assenters:  {' '.join([f'<@{pid}>' for pid in self.Data[chanKey]['Yay'] ])}\n\n" \
                     f"   Dissenters: {' '.join([f'<@{pid}>' for pid in self.Data[chanKey]['Nay'] ])}\n\n"
                 )
+                
+        self.Data[chanKey]['ProposingMSGs'] = []
+
+
 
 # funtion (Done)
 def proposalText(self, voteChan):
