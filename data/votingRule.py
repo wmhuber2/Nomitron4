@@ -261,7 +261,7 @@ async def popProposal(self, payload = None):
         if self.Data['PlayerData'][pid]['Proposal']['File'] is not None and len(self.Data['PlayerData'][pid]['Proposal']['File']) > 1: 
            nQueue += 1
 
-    nQueue = int(nQueue/6) +1
+    nQueue = int(nQueue/10) +1
     sliceQueue    = self.Data['Queue'][:nQueue]
     sliceHaymaker = self.Data['Haymaker'][:1]
     sliceArray    = list(self.Data['Subers'].keys())
