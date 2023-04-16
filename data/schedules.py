@@ -101,6 +101,16 @@ async def setup(self):
         interval = self.week
     )
 
+    radioStart = self.time(dayStart.year, dayStart.month, 6)
+    while radioStart + self.hour < self.now():  radioStart += self.hour
+    self.schedule(
+        name = 'Radioactive Tick', 
+        function = self.Mods.radioactiveRule.radioactiveTick, 
+        parameter = 'Time',
+        nextTime = radioStart + self.hour,
+        interval = self.hour
+    )
+
 async def onDayEnd(self):
     print('   |   END OF DAY', self.Data['Day'])
     await incrementDay(self)

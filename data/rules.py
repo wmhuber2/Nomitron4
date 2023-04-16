@@ -103,7 +103,7 @@ async def updateRules(self):
     self.Data['RuleList'] = {}
     with urllib.request.urlopen('https://gitlab.com/nomicgame/nomic-vi/-/raw/master/rules.md') as response:
         rules = response.read().decode("utf-8")
-        ruletxt = rules.split("## ")[1:]
+        ruletxt = rules.split("\n## ")[1:]
         print(f'   |   Found {len(ruletxt)} Rules')
         for rule in ruletxt:
             rule = rule.replace('\n',' \n')
