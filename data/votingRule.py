@@ -353,6 +353,7 @@ async def popProposal(self, payload = None):
                 gotProp = True
                 #await self.Refs['channels']['game'].send("<@250132828950364174> does the wording of this proposal have your certified Daniel seal of approval?")
         else:
+            self.Tasks.add( self.set_data([chanKey], votesCopy ) )
             self.Tasks.add( disableVoting(self, channelKey = chanName) )
 
                 
