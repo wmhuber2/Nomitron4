@@ -19,6 +19,7 @@ playerRole    = "Player"
 moderators  = ['Fenris#6136', 'Crorem#6962', 'iann39#8298', 'Alekosen#6969']
 NonBotChannels = []
 dontLogFunc = ['sudo', 'sudont','f','r','find','rule','ping']
+hideLogFunc = ['rock','paper','scissor']
 '''
 Implement Modules By Placing Module Python File In Same Directory
 Modules Must Have Different Names And Be Written With Python 3 Compatibility.
@@ -446,7 +447,10 @@ class DiscordNomicBot():
             functionName = payload['Content'][1:].split(' ')[0]
             await self.passToModule(functionName, payload)
             await self.runTasks()
-            if functionName not in dontLogFunc:
+            if functionName in hideLogFunc:
+                await self.send(self.Refs['channels'].get('actions-log'), f"{payload['Author']} - || {payload['Content']}\n ;) ||")
+            
+            elif functionName not in dontLogFunc:
                 await self.send(self.Refs['channels'].get('actions-log'), f"{payload['Author']} - {payload['Content']}")
             print('   --------------------------------')
         elif len(payload['Content']) > 0 or len(payload['Attachments']) > 0:

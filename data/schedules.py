@@ -136,7 +136,7 @@ async def setDay(self, payload):
             self.Data['Schedules'][sched]['nextTime'] += day - self.Data['Day']
     self.Data['Day'] = day
 
-async def holidy(self, payload):
+async def holiday(self, payload):
     if payload.get('Author') not in self.moderators: return
 
     self.isholiday = self.isholiday and False

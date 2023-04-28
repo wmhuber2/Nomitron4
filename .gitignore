@@ -1,5 +1,5 @@
 passkeys.txt
-data/BackupDataFiles
+data/Backups
 *.secret
 DiscordBot_Data.yml
 __pycache__
