@@ -19,7 +19,7 @@ playerRole    = "Player"
 moderators  = ['Fenris#6136', 'Crorem#6962', 'iann39#8298', 'Alekosen#6969']
 NonBotChannels = []
 dontLogFunc = ['sudo', 'sudont','f','r','find','rule','ping']
-hideLogFunc = ['rock','paper','scissor']
+hideLogFunc = ['rock','paper','scissors']
 '''
 Implement Modules By Placing Module Python File In Same Directory
 Modules Must Have Different Names And Be Written With Python 3 Compatibility.
