@@ -448,7 +448,7 @@ class DiscordNomicBot():
             await self.passToModule(functionName, payload)
             await self.runTasks()
             if functionName in hideLogFunc:
-                await self.send(self.Refs['channels'].get('actions-log'), f"{payload['Author']} - || {payload['Content']}\n ;) ||")
+                await self.send(self.Refs['channels'].get('actions-log'), f"{payload['Author']} - || {payload['Content']} {' '*(45 - len(payload['Content']))}\n ;) ||")
             
             elif functionName not in dontLogFunc:
                 await self.send(self.Refs['channels'].get('actions-log'), f"{payload['Author']} - {payload['Content']}")
