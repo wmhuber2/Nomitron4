@@ -12,7 +12,9 @@ async def on_message(self, payload):
 
         else: await payload['raw'].channel.send("You must DM me your resonse")
 
-async def tally_RPS(self):
+async def tally_RPS(self, payload=None):
+    if payload is not None: 
+        if payload.get('Author') not in self.moderators: return
     scissors = []
     rock = []
     paper = []
@@ -21,7 +23,7 @@ async def tally_RPS(self):
         if self.Data['PlayerData'][pid].get('Rock Paper Scissor Guess') == 'scissors':
             scissors.append(pid)
         if self.Data['PlayerData'][pid].get('Rock Paper Scissor Guess') == 'rock':
-            scirockssors.append(pid)
+            rock.append(pid)
         if self.Data['PlayerData'][pid].get('Rock Paper Scissor Guess') == 'paper':
             paper.append(pid)
 
