@@ -521,6 +521,11 @@ async def on_message(self, payload):
         if self.Data['PlayerData'][payload['Author ID']].get('Union State') == 'Break':
             await payload['raw'].add_reaction('❌')
             return
+            
+        voteKey = channelMap[payload['Channel']]
+        if      payload['Author ID'] not in self.Data[voteKey]['Yay'] \
+            and payload['Author ID'] not in self.Data[voteKey]['Nay']: 
+            self.Data['PlayerData'][payload['Author ID']]['Union Vote Counter'] += 1
 
         vote = payload['Content'].lower().strip()
         if vote in yayVotes:
