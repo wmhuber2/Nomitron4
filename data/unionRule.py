@@ -1,8 +1,13 @@
 async def unionize(self, payload):
     ActivePlayers = [] 
     for player in self.Refs['roles']['Player'].members:
+        pid = player.id
+        if 'Union Vote Counter' not in self.Data['PlayerData'][pid]:
+            self.Data['PlayerData'][pid]['Union Vote Counter' ]
+        self.Data['PlayerData'][pid]['Union Vote Counter'] = 0
+
         if player not in self.Refs['roles']['Inactive'].members:
-            ActivePlayers.append(player.id)
+            ActivePlayers.append(pid)
     union1 = []
     union2 = []
     union3 = []
@@ -38,12 +43,6 @@ async def unionize(self, payload):
           "Union 2: "+ ' '.join([self.Refs['players'][p].mention for p in union2])+"\n" \
           "Union 3: "+ ' '.join([self.Refs['players'][p].mention for p in union3])+"\n" 
     await self.Refs['channels']['actions'].send(msg)
-
-
-
-    if 'Union Vote Counter' not in self.Data['PlayerData'][pid]:
-        self.Data['PlayerData'][pid]['Union Vote Counter' ]
-    self.Data['PlayerData'][pid]['Union Vote Counter'] = 0
 
 
 async def unionBreak(self,payload):
