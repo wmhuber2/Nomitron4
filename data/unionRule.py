@@ -3,7 +3,7 @@ async def unionize(self, payload):
     for player in self.Refs['roles']['Player'].members:
         pid = player.id
         if 'Union Vote Counter' not in self.Data['PlayerData'][pid]:
-            self.Data['PlayerData'][pid]['Union Vote Counter' ]
+            self.Data['PlayerData'][pid]['Union Vote Counter' ] = 0
         self.Data['PlayerData'][pid]['Union Vote Counter'] = 0
 
         if player not in self.Refs['roles']['Inactive'].members:
