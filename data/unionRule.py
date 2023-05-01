@@ -34,9 +34,9 @@ async def unionize(self, payload):
         await self.Refs['players'][p].add_roles(   self.Refs['roles']['Union 3']) 
 
     msg = "New Unions Formed: \n" \
-          "Union 1: "+ ' '.join([self.Refs['players'][p].mention for i in union1])+"\n" \
-          "Union 2: "+ ' '.join([self.Refs['players'][p].mention for i in union2])+"\n" \
-          "Union 3: "+ ' '.join([self.Refs['players'][p].mention for i in union3])+"\n" 
+          "Union 1: "+ ' '.join([self.Refs['players'][p].mention for p in union1])+"\n" \
+          "Union 2: "+ ' '.join([self.Refs['players'][p].mention for p in union2])+"\n" \
+          "Union 3: "+ ' '.join([self.Refs['players'][p].mention for p in union3])+"\n" 
     await self.Refs['channels']['actions'].send(msg)
 
 
