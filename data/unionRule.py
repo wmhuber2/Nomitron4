@@ -18,17 +18,17 @@ async def unionize(self, payload):
         'Union 3': union3,
     }
 
-    for pid in union1:
+    for p in union1:
         await self.Refs['players'][p].add_roles(   self.Refs['roles']['Union 1']) 
         await self.Refs['players'][p].remove_roles(self.Refs['roles']['Union 2']) 
         await self.Refs['players'][p].remove_roles(self.Refs['roles']['Union 3']) 
     
-    for pid in union2:
+    for p in union2:
         await self.Refs['players'][p].remove_roles(self.Refs['roles']['Union 1']) 
         await self.Refs['players'][p].add_roles(   self.Refs['roles']['Union 2']) 
         await self.Refs['players'][p].remove_roles(self.Refs['roles']['Union 3']) 
     
-    for pid in union3:
+    for p in union3:
         await self.Refs['players'][p].remove_roles(self.Refs['roles']['Union 1']) 
         await self.Refs['players'][p].remove_roles(self.Refs['roles']['Union 2']) 
         await self.Refs['players'][p].add_roles(   self.Refs['roles']['Union 3']) 
