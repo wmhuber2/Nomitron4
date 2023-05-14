@@ -109,7 +109,7 @@ async def restart(self, payload):
 async def purge(self, payload):
     if payload.get('Author') in self.moderators:
         self.Data = {}
-        self.saveData()
+        await self.saveData()
         sys.exit(0)
 
 async def judge(self, payload):

@@ -5,6 +5,7 @@ from threading import Thread
 import logging
 from functools import reduce 
 import operator
+import traceback
 
 botCommandChar = '!'
 path = "/usr/src/app/"
@@ -132,7 +133,7 @@ class DiscordNomicBot():
     def updateData(self,):
 
         if 'Proposal#' not in self.Data:         self.Data['Proposal#']  = 300
-        if 'Queue' not in self.Data:             self.Data['Queue']      = {}
+        if 'Queue' not in self.Data:             self.Data['Queue']      = []
         if 'Subers' not in self.Data:            self.Data['Subers']     = dict()
         for k in self.Data['Subers'].keys():
             for m in ['Assenter', 'Dissenter']:
@@ -325,6 +326,7 @@ class DiscordNomicBot():
         payload_tmp = []
         if payload is not None: payload_tmp = [dict(payload), ]
         if kwargs is None: kwargs = {}
+        if function == 'def': function = 'defdef'
 
         # Search For Duplicates Modules
         for name in self.moduleNames:
@@ -339,21 +341,19 @@ class DiscordNomicBot():
 
         # Send to all functions
         toDo = []
+        errors = []
+       
         for name in self.moduleNames:
             mod = getattr(self.Mods, name)
             if hasattr(mod, function):
-                try:   toDo.append(getattr(mod, function)(self, *payload_tmp, **kwargs))
-                except self.discord.errors.HTTPException: 
-                    print(f'!!! HTTP Error In Module: {name} {function}!!!')
-                except Exception as e: 
-                    print(f'!!! Error In Module: {name} {function} {e}!!!')
-                    raise e
-        try:await asyncio.gather( *toDo )
-        #except self.discord.errors.HTTPException: 
-        #    print(f'!!! HTTP Error In Module: Gathering {function}!!!')
+                toDo.append(getattr(mod, function)(self, *payload_tmp, **kwargs))
+                
+        try: await asyncio.gather( *toDo )
+        except self.discord.errors.HTTPException: 
+            print(f'!!! HTTP Error In Module: Gathering {function}!!!')
         except Exception as e: 
-            print(f'!!! Error In Module: {function} {e}!!!')
-            raise e
+            traceback_str = ''.join(traceback.format_tb(e.__traceback__))
+            print(f'!!! PTM Error In Module: {function} {e} \n{traceback_str}')
 
         
 
@@ -422,7 +422,7 @@ class DiscordNomicBot():
             
             try: await self.passToModule('update')
             except Exception as e: print('ERROR:', e)
-            try:await self.runTasks()
+            try: await self.runTasks()
             except Exception as e: print('ERROR:', e)
             await self.saveData()
         print('Exit of Loop')

@@ -44,7 +44,7 @@ async def updateEmojis(self):
         old_nick = player.nick
         if old_nick == None: old_nick = player.name
         if nickname != old_nick:
-            if self.admin == pid:    await self.dm(pid,f"As admin, you must set your nick to {nickname}")
+            if self.admin == pid:    pass #await self.dm(pid,f"As admin, you must set your nick to {nickname}")
             else:                       
                 print('   |  Nick:', old_nick,'->', nickname )
                 await player.edit(nick = nickname)

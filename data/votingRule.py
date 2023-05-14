@@ -4,6 +4,7 @@
 ################################
 import pickle, sys, time, io, discord, datetime, urllib, re, random
 from copy import *
+import numpy as np
 channelMap = {
         'voting'  : 'Votes',
         'voting-1': 'Votes-1',
@@ -40,6 +41,11 @@ suberEmojis = ['♻️',]
 async def bot_tally(self):
     # Tally Main Voting Queue
     for chanName, chanKey in channelMap.items():
+        if chanKey not in self.Data: self.Data[chanKey] = deepcopy(defaultDict) 
+        for k in defaultDict.keys():
+            if k not in self.Data[chanKey]:
+                self.Data[chanKey][k] = deepcopy(defaultDict[k])
+
         if self.Data[chanKey]['ProposingPlayer'] is None or len(self.Data[chanKey]['ProposingText']) <= 1:
             continue
 
@@ -112,7 +118,20 @@ async def bot_tally(self):
                 
         self.Data[chanKey]['ProposingMSGs'] = []
 
+async def bot_vote(self, payload):
+    if payload is not None and payload.get('Author') not in self.moderators: return
+    voteKey = channelMap[payload['Channel']]
 
+    author = self.clientid
+    if np.random.randint(1, 3, 1) == 1:
+        if author not in self.Data[voteKey]['Yay']:           self.Data[voteKey]['Yay'].append( self.clientid )
+        if author in self.Data[voteKey]['Nay']:               self.Data[voteKey]['Nay'].remove( self.clientid  )
+        if author in self.Data[voteKey]['Abstain']:           self.Data[voteKey]['Abstain'].remove( self.clientid  )
+    else:
+        if author not in self.Data[voteKey]['Nay']:           self.Data[voteKey]['Nay'].append( self.clientid )
+        if author in self.Data[voteKey]['Yay']:               self.Data[voteKey]['Yay'].remove( self.clientid  )
+        if author in self.Data[voteKey]['Abstain']:           self.Data[voteKey]['Abstain'].remove( self.clientid  )
+        
 
 # funtion (Done)
 def proposalText(self, voteChan):

@@ -16,8 +16,6 @@ async def endTurn(self, payload = None):
         print(e)
     await incrementTurn(self)
     
-
-
 async def startTurn(self):
     print('   |   START OF TURN', self.Data['Turn'])
     await self.Refs['channels']['actions'].send(f"**Start of Turn #{self.Data['Turn']}.**")
@@ -29,6 +27,7 @@ async def startTurn(self):
     await self.Mods.gladiatorRule.gladiatorPointCheck(self)
     await self.Mods.suitsRule.resetMethods(self)
     await self.Mods.clockMarket.stonks(self)
+    await self.Mods.gleboRule.spawnGlebo(self)
     
 
 async def incrementTurn(self):
