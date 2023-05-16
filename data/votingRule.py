@@ -27,10 +27,11 @@ defaultDict = {
 
 
 yayEmojis = []
-yayVotes  = [ "aye", "yay", "yes", "y", "ye", "pog", "ya", "noice", "cash money", "yeah", "heck yeah", "hell yeah"]            
+yayVotes  = [ "aye", "yay", "yes", "y", "ye", "pog", "ya", "noice", "cash money", "yeah", "heck yeah", "hell yeah", 
+              "sí", "okay", "okey dokey", "vale", "bueno", "da", "pro", "💯"]            
 
 nayEmojis = []
-nayVotes  = ["nay", "no", "n", "nah", "nein", "sus", "cringe", "soggy"]
+nayVotes  = ["nay", "no", "n", "nah", "nein", "sus", "cringe", "soggy", "malo", "sin", "no way jose", "nē", "nix", "veto", "con", "💩" ]
 
 abstainEmojis = []
 abstainVotes  = ['abstain', 'withdraw']
