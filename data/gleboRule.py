@@ -182,7 +182,7 @@ async def defdef(self, payload):
         await payload['raw'].channel.send('- You must reply to a valid Glebo attack to defend.')
         return
 
-    if self.Data['Glebo']['Fighters'][rmsg.author.id] != 0:
+    if self.Data['Glebo']['Fighters'][rmsg.author.id] == 0:
         await payload['raw'].channel.send('- This attack has already been defeated.')
         return
 
