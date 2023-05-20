@@ -569,6 +569,11 @@ async def on_message(self, payload):
         print('   |   Saving Proposal', payload['Content'])
         pid = payload['Author ID']
 
+        isInactive = self.Refs['players'][pid].get_role(self.Refs['roles']['Inactive'].id) is not None
+        if isInactive:
+            await payload['raw'].add_reaction('❌')
+            return
+
         if self.Data['PlayerData'][pid].get('Union State') == 'Break':
             await payload['raw'].add_reaction('❌')
             return
