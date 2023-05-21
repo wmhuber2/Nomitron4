@@ -40,7 +40,8 @@ async def acceptOffer(self, payload):
     except: return
 
     if '@' in payload['message'].content[1:].split(' ')[1] and f"{payload['user'].id}" != payload['message'].content[1:].split(' ')[2:-1]:
-        await self.dm(pid, "You cannot accept that offer.")
+        print(f"{payload['user'].id}" != payload['message'].content[1:].split(' ')[2:-1])
+        await self.dm({payload['user'].id, "You cannot accept that offer.")
         return
     
     files  = [self.discord.File(fp=io.StringIO(payload['message'].content), filename="Terms_Of_Offer.txt"),]

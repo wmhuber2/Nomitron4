@@ -251,11 +251,6 @@ async def on_message(self, payload):
 
     if payload['Channel'] == 'suber-proposals': # Done For Nomic 4
 
-        isInactive = self.Refs['players'][pid].get_role(self.Refs['roles']['Inactive'].id) is not None
-        if isInactive:
-            await payload['raw'].add_reaction('❌')
-            return
-            
         isWhipFor = []
         pid = payload['Author ID']
         for suberKey in self.Data['Subers'].keys():
