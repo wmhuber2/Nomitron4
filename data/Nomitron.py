@@ -349,8 +349,9 @@ class DiscordNomicBot():
                 toDo.append(getattr(mod, function)(self, *payload_tmp, **kwargs))
                 
         try: await asyncio.gather( *toDo )
-        except self.discord.errors.HTTPException: 
-            print(f'!!! HTTP Error In Module: Gathering {function}!!!')
+        except self.discord.errors.HTTPException as e: 
+            traceback_str = ''.join(traceback.format_tb(e.__traceback__))
+            print(f'!!! HTTP Error In Module: Gathering {function}!!!\n{traceback_str}')
         except Exception as e: 
             traceback_str = ''.join(traceback.format_tb(e.__traceback__))
             print(f'!!! PTM Error In Module: {function} {e} \n{traceback_str}')
