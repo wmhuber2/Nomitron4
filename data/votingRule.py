@@ -481,7 +481,7 @@ async def on_reaction(self, payload):
         author   = int(list(payload['Attachments'].keys())[0].split("-")[0])
         updateQueue = False
 
-        if payload['emoji'] == '👍':
+        if payload['emoji'] == '🐴':
             if payload['user'].id not in self.Data['PlayerData'][author]['Proposal']['Supporters']:
                 self.Data['PlayerData'][author]['Proposal']['Supporters'].append(payload['user'].id)
             updateQueue = True
@@ -667,7 +667,7 @@ async def create_queue(self):
         for pid in sortedQ:  
             msg = await self.Refs['channels']['queue'].send("Generating Proposal View")
             self.Data['Queue-MSGS'].append([msg.id, "Generating Proposal View", None])
-            for r in ['👍', '👎', 'ℹ️']: await msg.add_reaction(r)
+            for r in ['🐴', '👎', 'ℹ️']: await msg.add_reaction(r)
     
     willBeEndorsing = set()
 

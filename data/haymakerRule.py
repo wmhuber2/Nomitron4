@@ -102,7 +102,7 @@ async def on_reaction(self, payload):
 
         updateQueue = False
 
-        if payload['emoji'] == '👍':
+        if payload['emoji'] == '🐴':
             if payload['user'].id not in self.Data['PlayerData'][pid]["DI's"][ name ]['Supporters']:
                 self.Data['PlayerData'][pid]["DI's"][ name ]['Supporters'].append(payload['user'].id)
             updateQueue = True
@@ -246,7 +246,7 @@ async def create_haymaker(self):
         for i in range(lenOfHaymaker):  
             msg = await self.Refs['channels']['haymaker'].send(".")
             self.Data['Haymaker-MSGS'].append([msg.id, ".", None])
-            for r in ['👍', '👎', 'ℹ️']: await msg.add_reaction(r)
+            for r in ['🐴', '👎', 'ℹ️']: await msg.add_reaction(r)
         self.Data['Haymaker-MSGS'] = self.Data['Haymaker-MSGS'][::-1]
     
     # Update Messages with Stats

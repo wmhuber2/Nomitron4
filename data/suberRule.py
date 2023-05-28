@@ -3,7 +3,7 @@ import time, discord, io
 maxSuberCount = 12
 
 whipEmojiMap = "1️⃣ 2️⃣ 3️⃣ 4️⃣ 5️⃣ 6️⃣ 7️⃣ 8️⃣ 9️⃣ 🔟".split(' ')
-endorseEmojiMap = ['👍', '👎', 'ℹ️']
+endorseEmojiMap = ['🐴', '👎', 'ℹ️']
 
 async def create_array(self):
     def keySort(key): return int(self.Data['Subers'][key]['Proposal#']) 
@@ -360,7 +360,7 @@ async def on_reaction(self, payload): # (Done)
                 await create_array(self)
 
         # Endorse Proposal
-        if self.Data['Subers'][suberKey][MajorOrMinor]['Is Official'] and payload['emoji'] == '👍':
+        if self.Data['Subers'][suberKey][MajorOrMinor]['Is Official'] and payload['emoji'] == '🐴':
             if payload['user'].id not in self.Data['Subers'][suberKey][MajorOrMinor]['Supporters']:
                 self.Data['Subers'][suberKey][MajorOrMinor]['Supporters'].append(payload['user'].id)
                 await create_array(self)

@@ -441,7 +441,10 @@ class DiscordNomicBot():
         if payload['Channel'] in self.NonBotChannels: return
 
         found = None
-        if self.isholiday and payload.get('Author') not in self.moderators: return
+        if self.isholiday and payload.get('Author') not in self.moderators: 
+            if payload['Channel'] == 'bot-spam':
+                await self.send(self.Refs['channels'].get('bot-spam'), f"🐴🐴🐴")
+            return
         while self.lock: await asyncio.sleep(1)
         if len(payload['Content']) > 0 and payload['Content'][0][0] == botCommandChar:
             print('   MSG--', payload['Content'], '-----')
