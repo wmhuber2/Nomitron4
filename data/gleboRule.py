@@ -88,14 +88,20 @@ async def spawnGlebo(self):
         self.Data['Glebo-MSGS'] = []
 
         await self.Refs['channels']['actions'].send(f"- {self.Data['Glebo']['Title']} has arrived seeking combat.")
+ 
+    for pid in self.Data['PlayerData'].keys():
+        if '🛡️' in self.Data['PlayerData'][pid]['Emojis']:            
+            await self.Mods.emojiRule.removeEmoji(self, gid, '🛡️' )
+    for pid,dmg in self.Data['Glebo']['Defenderes'].items():
+        if dmg != 0 : await self.Mods.emojiRule.addEmoji(self, pid, '🛡️' )
+        
+    self.Data['Glebo']['Defenderes'] = []
+    
 
     if self.Data['Glebo']['Future Damage'] >= self.Data['Glebo']['Health']:
         await self.Refs['channels']['actions'].send(f"- {self.Data['Glebo']['Title']} has been defeated.")
 
-        for pid in self.Data['PlayerData'].keys():
-            if '🛡️' in self.Data['PlayerData'][pid]['Emojis']:            
-                await self.Mods.emojiRule.removeEmoji(self, gid, '🛡️' )
-
+       
         for pid,dmg in self.Data['Glebo']['Fighters'].items():
             if dmg != 0 : await self.Mods.emojiRule.addEmoji(self, pid, '☠️' )
         for pid,dmg in self.Data['Glebo']['Defenderes'].items():
