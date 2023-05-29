@@ -52,4 +52,16 @@ async def resetGoms(self):
         await self.Mods.emojiRule.removeEmoji(self, pid, '🤸' )
     await self.Refs['channels']['actions'].send("-  Gom Jammer Reset.")
 
- 
+async def resetGom(self, payload):
+    if payload.get('Author') not in self.moderators: return
+    
+    if len(payload['Content'].split(' ')) > 1 : 
+        playerid = payload['Content'].split(' ')[1]
+        player = await self.getPlayer(playerid, payload)
+        pid = player.id
+
+        self.Data['PlayerData'][pid]['Gom Jammer Test'] = "Not Taken"
+        await self.Mods.emojiRule.removeEmoji(self, pid, '💉' )
+        await self.Mods.emojiRule.removeEmoji(self, pid, '🤸' )
+
+        await self.Refs['channels']['actions'].send("-  Gom Jammer Reset for player.")
