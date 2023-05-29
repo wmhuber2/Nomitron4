@@ -91,7 +91,7 @@ async def spawnGlebo(self):
  
     for pid in self.Data['PlayerData'].keys():
         if '🛡️' in self.Data['PlayerData'][pid]['Emojis']:            
-            await self.Mods.emojiRule.removeEmoji(self, gid, '🛡️' )
+            await self.Mods.emojiRule.removeEmoji(self, pid, '🛡️' )
     for pid,dmg in self.Data['Glebo']['Defenderes'].items():
         if dmg != 0 : await self.Mods.emojiRule.addEmoji(self, pid, '🛡️' )
         

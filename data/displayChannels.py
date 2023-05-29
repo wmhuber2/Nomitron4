@@ -1,13 +1,22 @@
 import datetime, yaml
-
+isUpdating = False
 async def update(self,):
-    await updateSchedules(self,)
-    await updateData(self,)
-    if len(self.Data['PlayerData']) == 0: return
-    for pid in self.Data['PlayerData'].keys():
-        await updatePlayer(self, pid)
+    global isUpdating
+    if isUpdating: return
     
-    await updatePlayerMenu(self,)
+    isUpdating = True
+    try:
+        await updateSchedules(self,)
+        await updateData(self,)
+        if len(self.Data['PlayerData']) == 0: return
+        for pid in self.Data['PlayerData'].keys():
+            await updatePlayer(self, pid)
+        
+        await updatePlayerMenu(self,)
+    except Exception as e:
+        raise e
+    isUpdating = False
+
 
 async def updateSchedules(self,):
     channelName = 'schedule-info'
