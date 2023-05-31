@@ -96,7 +96,7 @@ async def spawnGlebo(self, payload):
     for pid,dmg in self.Data['Glebo']['Defenderes'].items():
         if dmg != 0 : await self.Mods.emojiRule.addEmoji(self, pid, '🛡️' )
         
-    self.Data['Glebo']['Defenderes'] = []
+    self.Data['Glebo']['Defenderes'] = {}
     
 
     if self.Data['Glebo']['Future Damage'] >= self.Data['Glebo']['Health']:
