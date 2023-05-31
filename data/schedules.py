@@ -118,7 +118,7 @@ async def setup(self):
         function = self.Mods.horseRule.randHorse, 
         parameter = 'Time',
         nextTime = horseStart + self.day,
-        interval = self.hour
+        interval = self.day
     )
 
 async def onDayEnd(self):
