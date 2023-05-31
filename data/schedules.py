@@ -112,7 +112,7 @@ async def setup(self):
     )
     
     horseStart = self.time(dayStart.year, dayStart.month, 6, 12)
-    while radioStart + self.day < self.now():  horseStart += 24*self.hour
+    while horseStart + self.day < self.now():  horseStart += self.day
     self.schedule(
         name = 'Horse Newsletter', 
         function = self.Mods.horseRule.randHorse, 
