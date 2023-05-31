@@ -168,7 +168,10 @@ class DiscordNomicBot():
         if isinstance(self.Data['NextTurnStartTime'], float):
             self.Data['NextTurnStartTime'] = datetime.datetime.fromtimestamp(self.Data['NextTurnStartTime'], pytz.timezone('US/Central'))
 
-    
+        if 'Horse' not in self.Data: 
+            self.Data['Gladiator'] = {
+                'Opted In': []
+            }
         if 'Gladiator' not in self.Data: 
             self.Data['Gladiator'] = {
                 'Player': None, 
