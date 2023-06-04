@@ -73,7 +73,7 @@ primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67
 9941, 9949, 9967, 9973 ]
 
 
-async def spawnGlebo(self, payload):
+async def spawnGlebo(self, payload=None):
     if payload is not None and payload.get('Author') not in self.moderators: return
     if self.Data.get('Glebo') is None:
         glebo = {
