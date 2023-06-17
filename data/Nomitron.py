@@ -491,6 +491,7 @@ class DiscordNomicBot():
         react_payload['user']    = user
         react_payload['emoji']   = str(payload.emoji.name)
         react_payload['name']    = user.name + '#' + user.discriminator
+        print(react_payload['name'])
     
 
         if self.isholiday: return
