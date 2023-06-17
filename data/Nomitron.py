@@ -205,7 +205,7 @@ class DiscordNomicBot():
             del self.Data['Emoji Recipes']
 
         for pid, player in self.Refs['players'].items():
-            name = player.name + "#" + str(player.discriminator)
+            name = player.name
             if self.Refs['roles'][playerRole] not in player.roles: continue
 
             if pid not in self.Data['PlayerData']: self.Data['PlayerData'][pid] = {}
@@ -304,7 +304,7 @@ class DiscordNomicBot():
         if message == None:  return
         payload['raw'] = message
 
-        payload['Author'] = message.author.name + "#" + str(message.author.discriminator)
+        payload['Author'] = message.author.name
         payload['Author ID'] = message.author.id
         payload['Channel Type'] = message.channel.type
         
@@ -490,8 +490,7 @@ class DiscordNomicBot():
         react_payload['mode']    = mode
         react_payload['user']    = user
         react_payload['emoji']   = str(payload.emoji.name)
-        react_payload['name']    = user.name + '#' + user.discriminator
-        print(react_payload['name'])
+        react_payload['name']    = user.name
     
 
         if self.isholiday: return
@@ -536,7 +535,7 @@ class DiscordNomicBot():
         typingPayload['raw']     = payload
         typingPayload['Channel'] = channel
         typingPayload['user']    = user
-        typingPayload['name']    = user.name + '#' + user.discriminator
+        typingPayload['name']    = user.name
 
         await self.passToModule('on_typing', typingPayload)
         await self.saveData()
