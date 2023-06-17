@@ -5,6 +5,7 @@
 
 # Command 
 async def toggleEmoji(self, payload):
+    print(payload.get('Author'))
     if payload.get('Author') in self.moderators and len(payload['Content'].split(' ')) == 3: 
         _, playerid, emoji = payload['Content'].split(' ')
         player = await self.getPlayer(playerid, payload)

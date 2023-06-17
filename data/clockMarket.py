@@ -51,7 +51,9 @@ async def withdraw(self,payload):
         await msg.add_reaction('✔️')
 
 # schedule
-async def stonks(self):
+async def stonks(self, payload=None):
+    if payload is not None and payload.get('Author') not in self.moderators: return
+    
     randNum = numpy.random.randint(0, 100, 1)
     multiplier = -1
     if   randNum < 52:
