@@ -492,7 +492,7 @@ class DiscordNomicBot():
         react_payload['emoji']   = str(payload.emoji.name)
         react_payload['name']    = user.name
     
-
+        print(react_payload['name'])
         if self.isholiday: return
 
         while self.lock: await asyncio.sleep(1)
