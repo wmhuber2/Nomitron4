@@ -35,8 +35,14 @@ async def challenge(self, payload):
         return
     await self.Mods.suitsRule.rewardMethod(self,pid, 'Challenge')
     self.Data['PlayerData'][pid]['Challanged'] = True
+
+
+    isInactive = self.Refs['players'][self.Data['Gladiator']['Player']].get_role(self.Refs['roles']['Inactive'].id) is not None
+
     gladiatorRoll = np.random.randint(1, 101, 1)
     playerRoll    = np.random.randint(1, 25, 1)
+    if isInactive: playerRoll += 10
+
     if playerRoll > gladiatorRoll:
         await message.channel.send(f"-  Gladiator: {gladiatorRoll}\nPlayer {playerRoll}\n{payload['Author']} Wins")
         
