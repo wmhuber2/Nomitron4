@@ -124,6 +124,8 @@ async def setup(self):
 async def onDayEnd(self):
     print('   |   END OF DAY', self.Data['Day'])
     await incrementDay(self)
+    try: await self.Mods.horseRule.checkHorses(self)
+    except: print('Horse Error')
     try: await self.Refs['channels']['mod-spam'].send(file=self.discord.File(self.path + self.savefile))
     except: pass
     await self.Mods.rules.updateRules(self)

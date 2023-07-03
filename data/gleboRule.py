@@ -216,3 +216,16 @@ async def defdef(self, payload):
         self.Data['Glebo']['Defenderes'][rmsg.author.id] = 0
         await payload['raw'].channel.send(f"- {playerName} has failed to parry the blow.({defRoll})")
         
+async def setGlebo(self, payload):
+    if payload.get('Author') not in self.moderators : return
+    
+    cont = payload['Content'].strip().split(' ')
+    if len(cont) == 2 : 
+        print('   |   Setting Glebo Health')
+        
+        toset = 0
+        try: toset = int(cont[1])
+        except ValueError: return
+        print("   |  ", toset)
+        self.Data['Glebo']['Health'] = toset
+        
