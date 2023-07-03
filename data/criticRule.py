@@ -4,6 +4,34 @@
 import random 
 
 # Turn Callable
+async def rerollCritic(self, payload):
+    if payload.get('Author') not in self.moderators: return
+    optedPlayers = list(self.Data['Critic']['Opted In'])
+    
+    for pid in self.Data['PlayerData'].keys():
+        isInactive = self.Refs['players'][pid].get_role(self.Refs['roles']['Inactive'].id) is not None
+        if pid in optedPlayers and isInactive: optedPlayers.remove(pid)
+    
+    activePlayers = list(optedPlayers)
+
+    print('   |   Valid Critics:')
+    for pid in self.Data['Critic']['Banned']:
+        if pid in activePlayers: activePlayers.remove(pid)
+        else: print('   |   -', self.Data['PlayerData'][pid]['Name'])
+    
+    if len(activePlayers) == 0: 
+        self.Data['Critic']['Banned'] = []
+        activePlayers = optedPlayers
+        await self.Refs['channels']['actions'].send('-  The Critic Pool is Reset!')
+    if len(activePlayers) == 0: 
+        await self.Refs['channels']['actions'].send('-  There are no valid Critic Candidates!')
+    else:
+        print(len(activePlayers), 'Choices For Critic')
+        critic = random.choice(activePlayers)
+        self.Data['Critic']['Banned'].append(critic)
+        await self.Refs['channels']['actions'].send(f'-  <@{critic}> Is The New Critic!')
+
+
 async def getNewCritic(self, payload=None):
     if payload is not None and payload.get('Author') not in self.moderators: return
     optedPlayers = list(self.Data['Critic']['Opted In'])
@@ -55,11 +83,24 @@ async def optIn(self, payload):
 # Command
 async def optOut(self, payload):
     if payload['Channel'] != 'Actions':
-        if payload['Author ID'] not in self.Data['Critic']['Opted In']:
-            await payload['raw'].channel.send('You already opted out.')
+        if payload.get('Author') in self.moderators and len(payload['Content'].split(' ')) > 1 : 
+            playerid = payload['Content'].split(' ')[1]
+            player = await self.getPlayer(playerid, payload)
+            pid = player.id
+
+            if payload['Author ID'] not in self.Data['Critic']['Opted In']:
+                await payload['raw'].channel.send(player.name,' already opted out.')
+            else:
+                self.Data['Critic']['Opted In'].remove( payload['Author ID'] )
+                await payload['raw'].channel.send(player.name, 'is now opted out of the Critic Pool')
+
+            
         else:
-            self.Data['Critic']['Opted In'].remove( payload['Author ID'] )
-            await payload['raw'].channel.send('You are opted out of the Critic Pool')
+            if payload['Author ID'] not in self.Data['Critic']['Opted In']:
+                await payload['raw'].channel.send('You already opted out.')
+            else:
+                self.Data['Critic']['Opted In'].remove( payload['Author ID'] )
+                await payload['raw'].channel.send('You are opted out of the Critic Pool')
 
 
 """
