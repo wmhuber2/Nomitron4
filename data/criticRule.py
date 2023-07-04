@@ -89,10 +89,10 @@ async def optOut(self, payload):
             pid = player.id
 
             if payload['Author ID'] not in self.Data['Critic']['Opted In']:
-                await payload['raw'].channel.send(player.name,' already opted out.')
+                await payload['raw'].channel.send(player.name+' already opted out.')
             else:
                 self.Data['Critic']['Opted In'].remove( payload['Author ID'] )
-                await payload['raw'].channel.send(player.name, 'is now opted out of the Critic Pool')
+                await payload['raw'].channel.send(player.name+' is now opted out of the Critic Pool')
 
             
         else:

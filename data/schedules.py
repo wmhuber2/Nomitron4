@@ -151,7 +151,7 @@ async def setDay(self, payload):
 async def holiday(self, payload):
     if payload.get('Author') not in self.moderators: return
 
-    self.isholiday = self.isholiday and False
+    self.isholiday = not self.isholiday 
 
     if self.isholiday: await self.Refs['channels']['actions'].send(f"-  It is now a holiday.")
     else:              await self.Refs['channels']['actions'].send(f"-  It is no longer a holiday.")
