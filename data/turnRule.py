@@ -28,6 +28,7 @@ async def startTurn(self):
     await self.Mods.suitsRule.resetMethods(self)
     await self.Mods.clockMarket.stonks(self)
     await self.Mods.gleboRule.spawnGlebo(self)
+    await self.Mods.horseRule.spookinessCheck(self)
     
 
 async def incrementTurn(self):

@@ -78,9 +78,43 @@ async def feed(self, payload):
 
 async def soothe(self, payload):
     pid = payload['Author ID']
-    self.Data['PlayerData'][pid]['Horse']['Has Been Soothed'] = True
-    self.Data['PlayerData'][pid]['Horse']['Spookiness']      -= 1
-    await payload['raw'].add_reaction('✔️')
+
+    cont = payload['Content'].strip().split(' ')
+    if payload.get('Author') in self.moderators and len(cont) == 3 : 
+        playerid = payload['Content'].split(' ')[1]
+        player = await self.getPlayer(playerid, payload)
+        pid = player.id
+
+        toset = 0
+        try: toset = int(cont[2])
+        except ValueError: return
+        self.Data['PlayerData'][pid]['Horse']['Spookiness'] = toset
+        print('   |   Setting soothe counter For ',player.name)
+        print("   |  ", toset)
+        await payload['raw'].add_reaction('✔️')
+
+    elif not self.Data['PlayerData'][pid]['Horse']['Has Been Soothed']:
+        self.Data['PlayerData'][pid]['Horse']['Has Been Soothed'] = True
+        self.Data['PlayerData'][pid]['Horse']['Spookiness']      -= 1
+        await payload['raw'].add_reaction('✔️')
+
+async def setHorseHealth(self, payload):
+    pid = payload['Author ID']
+
+    cont = payload['Content'].strip().split(' ')
+    if payload.get('Author') in self.moderators and len(cont) == 3 : 
+        playerid = payload['Content'].split(' ')[1]
+        player = await self.getPlayer(playerid, payload)
+        pid = player.id
+
+        toset = 0
+        try: toset = int(cont[2])
+        except ValueError: return
+        self.Data['PlayerData'][pid]['Horse']['Health'] = toset
+        print('   |   Setting health counter For ',player.name)
+        print("   |  ", toset)
+        await payload['raw'].add_reaction('✔️')
+
 
 async def sugar(self, payload):
     pid = payload['Author ID']
@@ -102,14 +136,15 @@ async def sugar(self, payload):
     self.Data['PlayerData'][pid]['Horse']['Health'] += offering
     await payload['raw'].add_reaction('✔️')
 
-
-async def checkHorses(self, payload= None):
-    if payload.get('Author') not in self.moderators : return
+async def spookinessCheck(self):
     for pid in self.Data['PlayerData'].keys():
         if not self.Data['PlayerData'][pid]['Horse']['Has Been Soothed']:
             self.Data['PlayerData'][pid]['Horse']['Spookiness'] = horses[self.Data['PlayerData'][pid]['Horse']['Type']]
         self.Data['PlayerData'][pid]['Horse']['Has Been Soothed'] = False
 
+async def checkHorses(self, payload= None):
+    if payload.get('Author') not in self.moderators : return
+    for pid in self.Data['PlayerData'].keys():
 
         if not self.Data['PlayerData'][pid]['Horse']['Has Been Feed']:
             self.Data['PlayerData'][pid]['Horse']['Health'] -= 1

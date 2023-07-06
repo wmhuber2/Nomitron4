@@ -50,3 +50,5 @@ Mod Commands:
 
     !giveRandHorse @player  : give 1 player a rand horse
     !giveRandHorse          : give all players a rand horse
+    !soothe @player NUM     : Set amount of soothes
+    !setHorseHealth @player NUM: Set player horse health
