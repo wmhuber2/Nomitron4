@@ -20,7 +20,14 @@ async def randHorse(self, payload = None):
     images = [
         "https://media.giphy.com/media/JnvlBMZ5R0GyI/giphy.gif",
         "https://media.giphy.com/media/JnvlBMZ5R0GyI/giphy.gif",
-        "https://media.giphy.com/media/dBmTd7FBuQNLeRfo4B/giphy.gif"]
+        "https://media.giphy.com/media/dBmTd7FBuQNLeRfo4B/giphy.gif",
+        "https://media.giphy.com/media/uA2ZclTgLaaoE/giphy.gif",
+        "https://media.giphy.com/media/ByTh8UTOcOXL2/giphy.gif",
+        "https://media.giphy.com/media/l4pTkyF1QfRIpjPVK/giphy.gif",
+        "https://media.giphy.com/media/2YpSDVERqyhJmcG5cA/giphy-downsized-large.gif",
+        "https://media.giphy.com/media/3Rbfli2Rl9SVI4WScv/giphy.gif",
+        "https://media.giphy.com/media/sRclnIVXVvz44/giphy.gif",
+    ]
     
     msg = random.choice(images) + '\n'
     for optin in self.Data['Horse']['Opted In']:
