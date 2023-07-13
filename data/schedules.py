@@ -111,7 +111,7 @@ async def setup(self):
         interval = self.hour
     )
     
-    horseStart = self.time(dayStart.year, dayStart.month, 6, 12)
+    horseStart = self.time(dayStart.year, dayStart.month, 6)
     while horseStart + self.day < self.now():  horseStart += self.day
     self.schedule(
         name = 'Horse Newsletter', 
@@ -121,23 +121,25 @@ async def setup(self):
         interval = self.day
     )
     
-    horsePickStart = self.time(dayStart.year, dayStart.month, 6, 13)
+    horsePickStart = self.time(dayStart.year, dayStart.month, 6+1)
     while horsePickStart + self.week < self.now():  horsePickStart += self.week
     self.schedule(
         name = 'Horse Race Picking', 
         function = self.Mods.horseRule.chooseRaceHorses, 
         parameter = 'Time',
         nextTime = horsePickStart + self.week,
-        interval = self.week
+        interval = self.week,
+        override = True
     )
-    horseRaceStart = self.time(dayStart.year, dayStart.month, 6, 14)
+    horseRaceStart = self.time(dayStart.year, dayStart.month, 6+2)
     while horseRaceStart + self.week < self.now():  horseRaceStart += self.week
     self.schedule(
         name = 'Horse Race Race', 
         function = self.Mods.horseRule.raceHorses, 
         parameter = 'Time',
         nextTime = horseRaceStart + self.week,
-        interval = self.week
+        interval = self.week,
+        override = True
     )
 
 async def onDayEnd(self):

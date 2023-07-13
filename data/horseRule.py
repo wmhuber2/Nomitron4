@@ -248,8 +248,8 @@ async def raceHorses(self,payload = None):
     msg = "Race Results In:" 
     msg += "\n - 1st : "
     for pid in score1st:
-        betReward    = self.Data['Horse']['Bet Pool'] // 3
-        self.Data['Horse']['Bet Pool'] = self.Data['Horse']['Bet Pool'] % 3
+        betReward    = self.Data['Horse']['Bet Pool'] // len(self.Data['PlayerData'][pid]['Horse']['Betters'])
+        self.Data['Horse']['Bet Pool'] = self.Data['Horse']['Bet Pool'] % len(self.Data['PlayerData'][pid]['Horse']['Betters'])
 
         for betpid in self.Data['PlayerData'][pid]['Horse']['Betters']:
             self.Tasks.add( self.Mods.tokensRule.addTokens(self, betpid, betReward) )
