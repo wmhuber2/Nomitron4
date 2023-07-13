@@ -322,6 +322,21 @@ class DiscordNomicBot():
 
 
     """
+    Run a list of tasks in a wrapper. (Updated to Nomitron 4)
+    """   
+    async def wrap(self, function):
+        try: await function
+        except Exception as e: 
+            traceback_str = ''.join(traceback.format_tb(e.__traceback__))
+            print(f'!!! Error In Gather: {function} {e} \n{traceback_str}')
+
+    async def gather(self, *toDo):
+        realTodo = []
+        for task in toDo:
+            realTodo.append( self.wrap(task) )
+        asyncio.gather( *realTodo )
+
+    """
     Pass a command to its respective module. (Updated to Nomitron 4)
     """   
     async def passToModule(self, function, payload= None, kwargs={}):
@@ -351,7 +366,7 @@ class DiscordNomicBot():
             if hasattr(mod, function):
                 toDo.append(getattr(mod, function)(self, *payload_tmp, **kwargs))
                 
-        try: await asyncio.gather( *toDo )
+        try: await self.gather( *toDo )
         except self.discord.errors.HTTPException as e: 
             traceback_str = ''.join(traceback.format_tb(e.__traceback__))
             print(f'!!! HTTP Error In Module: Gathering {function}!!!\n{traceback_str}')
@@ -641,8 +656,8 @@ class DiscordNomicBot():
     """
     Schedule Event (Updated to Nomitron 4)
     """
-    def schedule(self,name,function, parameter, nextTime, interval, varis=None):
-        if name in self.Data['Schedules']: 
+    def schedule(self,name,function, parameter, nextTime, interval, varis=None, override = False):
+        if name in self.Data['Schedules'] and override == False: 
             print(f'      Schedule {name} Exists: Skipping...')
             return 
         else:
@@ -729,7 +744,7 @@ class DiscordNomicBot():
         for i in toDoNames: print('   |  ',i)
         if len(toDoNames) > 0: print('   ---------------------')
         self.lock = True
-        await asyncio.gather( *toDo )
+        await self.gather( *toDo )
         await self.runTasks()
         if len(toDoNames) > 0: print('   ---------------------')
         self.lock = False
@@ -744,7 +759,7 @@ class DiscordNomicBot():
         print('   |   Run Tasks: ')
         toDo = list(self.Tasks)
         self.Tasks = set()
-        await asyncio.gather( *toDo )
+        await self.gather( *toDo )
         self.Data['lastAlive'] = datetime.datetime.now()
         if len(self.Tasks) > 0: await self.runTasks()
         print('   ----------------------------------')

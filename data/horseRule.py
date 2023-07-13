@@ -1,4 +1,4 @@
-import random
+import random, numpy
 
 async def neigh(self, payload):
     if payload['Channel'] != 'Actions':
@@ -103,6 +103,8 @@ async def soothe(self, payload):
     elif not self.Data['PlayerData'][pid]['Horse']['Has Been Soothed']:
         self.Data['PlayerData'][pid]['Horse']['Has Been Soothed'] = True
         self.Data['PlayerData'][pid]['Horse']['Spookiness']      -= 1
+        if pid in self.Data['Horse']['Racers']:
+            self.Data['PlayerData'][pid]['Horse']['Race Soothe Bonus'] = 1
         await payload['raw'].add_reaction('✔️')
 
 async def setHorseHealth(self, payload):
@@ -150,8 +152,10 @@ async def spookinessCheck(self):
         self.Data['PlayerData'][pid]['Horse']['Has Been Soothed'] = False
 
 async def checkHorses(self, payload= None):
-    if payload.get('Author') not in self.moderators : return
+    if payload is not None and payload.get('Author') not in self.moderators : return
     for pid in self.Data['PlayerData'].keys():
+        if self.Data['PlayerData'][pid].get('Horse') is None: continue
+
 
         if not self.Data['PlayerData'][pid]['Horse']['Has Been Feed']:
             self.Data['PlayerData'][pid]['Horse']['Health'] -= 1
@@ -166,3 +170,143 @@ async def checkHorses(self, payload= None):
         if self.Data['PlayerData'][pid]['Horse']['Spookiness'] == 0 and self.Data['PlayerData'][pid]['Horse']['Health'] > 0:
             self.Data['PlayerData'][pid]['Horse']['Is Friend']= True  
             await self.Mods.emojiRule.addEmoji(self, pid, '🐴' )
+
+async def horsename(self, payload):
+    pid = payload['Author ID']
+    cmd = payload['Content'].split(' ')
+    if len(cmd) < 1:
+        await payload['raw'].channel.send("You must give it a name")
+        return
+    name = ' '.join(cmd[1:])
+    self.Data['PlayerData'][pid]['Horse']['Name'] = name
+    self.Data['PlayerData'][pid]['Horse']['Victories'] = 0
+    self.Data['PlayerData'][pid]['Horse']['Stars'] = ''
+    await payload['raw'].add_reaction('✔️')
+
+async def chooseRaceHorses(self, payload = None):
+    if payload is not None and payload.get('Author') not in self.moderators : return
+
+    raceHorses = []
+
+    for pid in self.Data['PlayerData'].keys():
+        if self.Data['PlayerData'][pid]['Horse'].get('Name') is None: continue
+        if self.Data['PlayerData'][pid]['Horse'].get('Has Raced') == True: 
+            self.Data['PlayerData'][pid]['Horse']['Has Raced'] = False
+            continue
+        raceHorses.append(pid)
+
+    msg = ''
+    if len(raceHorses) < 3:
+        msg = "There are not enough horses to race. *Sad Horse Noises*"
+        raceHorses = []
+    else: 
+        raceHorses  = random.choice(raceHorses,k=3)
+        msg = "This week's race horses are!"
+    sootheBonus = [0,0,0]
+    for pid in self.Data['PlayerData'].keys():
+        if pid in raceHorses:
+            msg += "\n - "+self.Data['PlayerData'][pid]['Name']+'\'s Horse: '+self.Data['PlayerData'][pid]['Horse']['Name']
+            self.Data['PlayerData'][pid]['Horse']['Race Bonus'] = \
+                int(self.Data['PlayerData'][pid]['Horse']['Has Been Soothed'])
+            self.Data['PlayerData'][pid]['Horse']['Betters'] = []
+        else:
+            self.Data['PlayerData'][pid]['Horse']['Race Soothe Bonus'] = None
+    self.Data['Horse']['Racers'] = raceHorses
+    if self.Data['Horse'].get('Bet Pool') is None: self.Data['Horse']['Bet Pool'] = 0
+
+    await self.Refs['channels']['actions'].send(msg)
+
+async def raceHorses(self,payload = None):
+    scores = numpy.random.randint(1, 21, 3)
+
+    if len(self.Data['Horse']['Racers']) != 3:
+        await self.Refs['channels']['actions'].send("There are not enough horses to race. *Sad Horse Noises*")
+        return
+
+    for i in [0,1,2]:
+        pid = self.Data['Horse']['Racers'][i]
+
+        healthDif = horses[self.Data['PlayerData'][pid]['Horse']['Type']] - self.Data['PlayerData'][pid]['Horse']['Health']
+        scores[i] -= healthDif
+
+        if self.Data['PlayerData'][pid]['Horse']['Is Friend']:   scores[i] += 3
+
+        scores[i] += self.Data['PlayerData'][pid]['Horse']['Race Soothe Bonus'] 
+    
+    sortedScores = sorted(set(scores))
+    score1st = []
+    score2st = [] 
+    score3st = []
+
+    for i in [0,1,2]:
+        pid = self.Data['Horse']['Racers'][i]
+        if len(sortedScores) >= 1 and scores[i] == sortedScores[0]: score1st.append(pid)
+        if len(sortedScores) >= 2 and scores[i] == sortedScores[1]: score2st.append(pid)
+        if len(sortedScores) >= 3 and scores[i] == sortedScores[2]: score3st.append(pid)
+
+
+    msg = "Race Results In:" 
+    msg += "\n - 1st : "
+    for pid in score1st:
+
+        betReward    = self.Data['PlayerData'][pid]['Horse']['Betters'] // 3
+        self.Data['Horse']['Bet Pool'] = self.Data['PlayerData'][pid]['Horse']['Betters'] % 3
+
+        for betpid in self.Data['PlayerData'][pid]['Horse']['Betters']:
+            self.Tasks.add( self.Mods.tokensRule.addTokens(self, betpid, betReward) )
+
+        del self.Data['PlayerData'][pid]['Horse']['Betters']
+
+        msg += '\n    ' + self.Data['PlayerData'][pid]['Name']+'\'s Horse: '+self.Data['PlayerData'][pid]['Horse']['Name']
+        self.Data['PlayerData'][pid]['Horse']['Stars']  += '⭐'
+        self.Data['PlayerData'][pid]['Horse']['Victories'] += 1
+
+        if self.Data['PlayerData'][pid]['Horse']['Victories'] == 10:
+            toDo.append( self.Mods.emojiRule.addEmoji(self,pid, '🏆') )
+            self.Data['PlayerData'][pid]['Horse']['Name'] += '🏆'
+
+    msg += "\n - 2st : "
+    for pid in score2st:
+        msg += '\n    ' + self.Data['PlayerData'][pid]['Name']+'\'s Horse: '+self.Data['PlayerData'][pid]['Horse']['Name']
+        self.Data['PlayerData'][pid]['Horse']['Victories'] = 0
+    msg += "\n - 3st : "
+    for pid in score3st:
+        msg += '\n    ' + self.Data['PlayerData'][pid]['Name']+'\'s Horse: '+self.Data['PlayerData'][pid]['Horse']['Name']
+        self.Data['PlayerData'][pid]['Horse']['Victories'] = 0
+    
+    await self.Refs['channels']['actions'].send(msg)
+
+async def bet(self, payload):
+    pid = payload['Author ID']
+    cmd = payload['Content'].split(' ')
+    if len(cmd) < 1:
+        await payload['raw'].channel.send("You must enter a name")
+        return
+    name = ' '.join(cmd[1:])
+
+    if self.Data['PlayerData'][payload['Author ID']]['Friendship Tokens'] - 2 < 0: 
+        await payload['raw'].channel.send("-  You are too poor.")
+        return
+
+    for racerpid in self.Data['Horse']['Racers']:
+        if name == self.Data['PlayerData'][racerpid]['Horse']['Name']:
+            if self.Data['PlayerData'].get('Horses You Bet On') is None:
+                self.Data['PlayerData']['Horses You Bet On'] = []
+            if racerpid in self.Data['PlayerData']['Horses You Bet On']:
+                await payload['raw'].channel.send("You already bet on this horse.")
+                return
+
+            if self.Data['PlayerData'][racerpid]['Horse'].get('Betters') is None:
+                await payload['raw'].channel.send("This Horse Is Not in a Race")
+                return
+            else:
+                self.Data['PlayerData'][racerpid]['Horse']['Betters'].append(pid)
+                self.Data['PlayerData']['Horses You Bet On'].append(racerpid)
+                await payload['raw'].add_reaction('✔️')
+                return
+    
+    await payload['raw'].channel.send("Could Not Find Horse. Is the name correct?")
+    
+
+
+

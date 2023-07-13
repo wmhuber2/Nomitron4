@@ -194,3 +194,6 @@ async def nuke(self, payload):
         await existing_channel.delete()
     else:
         print(f'No channel named **{channel_name}** was found')
+
+async def dance(self, payload):
+    await payload['raw'].channel.send("https://media.tenor.com/3SSi0qLshgkAAAAC/time-to-party-dance.gif")
