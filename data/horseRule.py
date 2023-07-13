@@ -248,13 +248,11 @@ async def raceHorses(self,payload = None):
     msg = "Race Results In:" 
     msg += "\n - 1st : "
     for pid in score1st:
-
-        betReward    = self.Data['PlayerData'][pid]['Horse']['Betters'] // 3
-        self.Data['Horse']['Bet Pool'] = self.Data['PlayerData'][pid]['Horse']['Betters'] % 3
+        betReward    = self.Data['Horse']['Bet Pool'] // 3
+        self.Data['Horse']['Bet Pool'] = self.Data['Horse']['Bet Pool'] % 3
 
         for betpid in self.Data['PlayerData'][pid]['Horse']['Betters']:
             self.Tasks.add( self.Mods.tokensRule.addTokens(self, betpid, betReward) )
-
         del self.Data['PlayerData'][pid]['Horse']['Betters']
 
         msg += '\n    ' + self.Data['PlayerData'][pid]['Name']+'\'s Horse: '+self.Data['PlayerData'][pid]['Horse']['Name']
@@ -269,10 +267,16 @@ async def raceHorses(self,payload = None):
     for pid in score2st:
         msg += '\n    ' + self.Data['PlayerData'][pid]['Name']+'\'s Horse: '+self.Data['PlayerData'][pid]['Horse']['Name']
         self.Data['PlayerData'][pid]['Horse']['Victories'] = 0
+
+        del self.Data['PlayerData'][pid]['Horse']['Betters']
+
     msg += "\n - 3st : "
     for pid in score3st:
         msg += '\n    ' + self.Data['PlayerData'][pid]['Name']+'\'s Horse: '+self.Data['PlayerData'][pid]['Horse']['Name']
         self.Data['PlayerData'][pid]['Horse']['Victories'] = 0
+
+        del self.Data['PlayerData'][pid]['Horse']['Betters']
+
     
     await self.Refs['channels']['actions'].send(msg)
 
@@ -301,6 +305,8 @@ async def bet(self, payload):
                 return
             else:
                 self.Data['PlayerData'][racerpid]['Horse']['Betters'].append(pid)
+                self.Data['Horse']['Bet Pool'] += 2
+                self.Data['PlayerData'][payload['Author ID']]['Friendship Tokens'] -= 2
                 self.Data['PlayerData']['Horses You Bet On'].append(racerpid)
                 await payload['raw'].add_reaction('✔️')
                 return
