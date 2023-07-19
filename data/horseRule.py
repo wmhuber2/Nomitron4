@@ -231,7 +231,7 @@ async def raceHorses(self,payload = None):
 
         if self.Data['PlayerData'][pid]['Horse']['Is Friend']:   scores[i] += 3
 
-        scores[i] += self.Data['PlayerData'][pid]['Horse']['Race Soothe Bonus'] 
+        scores[i] += self.Data['PlayerData'][pid]['Horse']['Race Soothe Bonus'] in [1, True]
     
     sortedScores = sorted(set(scores))
     score1st = []
