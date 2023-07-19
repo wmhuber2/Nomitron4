@@ -121,7 +121,7 @@ async def setup(self):
         interval = self.day
     )
     
-    horsePickStart = self.time(dayStart.year, dayStart.month, 6+1)
+    horsePickStart = self.time(2023, 6, 12+1)
     while horsePickStart + self.week < self.now():  horsePickStart += self.week
     self.schedule(
         name = 'Horse Race Picking', 
@@ -131,7 +131,7 @@ async def setup(self):
         interval = self.week,
         override = True
     )
-    horseRaceStart = self.time(dayStart.year, dayStart.month, 6+2)
+    horseRaceStart = self.time(2023, 6, 12+2)
     while horseRaceStart + self.week < self.now():  horseRaceStart += self.week
     self.schedule(
         name = 'Horse Race Race', 

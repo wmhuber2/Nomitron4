@@ -323,7 +323,7 @@ async def popProposal(self, payload = None):
                 await self.Refs['channels']['game'].send("<@250132828950364174> does the wording of this proposal have your certified Daniel seal of approval?")
 
         # SUBERS
-        elif len(sliceQueue) == 0 and len(sliceArray) > 0:
+        if len(sliceQueue) == 0 and len(sliceArray) > 0:
             while 1:
                 if len(sliceArray) == 0: break
                 suberKey = sliceArray.pop(0)
@@ -352,7 +352,7 @@ async def popProposal(self, payload = None):
                     break
                         
         # Haymakers
-        elif len(sliceQueue) == 0 and len(sliceArray) == 0 and len(sliceHaymaker) > 0:
+        if len(sliceQueue) == 0 and len(sliceArray) == 0 and len(sliceHaymaker) > 0:
             pid, name = sliceHaymaker.pop(0)
             print(pid, name)
             nActivePlayers = len(self.Refs['roles']['Player'].members) - len(self.Refs['roles']['Inactive'].members)
@@ -372,7 +372,8 @@ async def popProposal(self, payload = None):
                 self.Tasks.add( enableVoting(self, channelKey = chanName) )
                 gotProp = True
                 #await self.Refs['channels']['game'].send("<@250132828950364174> does the wording of this proposal have your certified Daniel seal of approval?")
-        else:
+        
+        if len(sliceQueue) == 0 and len(sliceArray) == 0 and len(sliceHaymaker) == 0:
             self.Tasks.add( self.set_data([chanKey], votesCopy ) )
             self.Tasks.add( disableVoting(self, channelKey = chanName) )
 
