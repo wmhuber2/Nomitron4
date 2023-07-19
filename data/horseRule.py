@@ -246,7 +246,7 @@ async def raceHorses(self,payload = None):
 
 
     msg = "Race Results In:" 
-    msg += "\n - 1st : "
+    msg += f"\n - 1st ({sortedScores[0]}): "
     for pid in score1st:
         betReward    = self.Data['Horse']['Bet Pool'] // len(self.Data['PlayerData'][pid]['Horse']['Betters'])
         self.Data['Horse']['Bet Pool'] = self.Data['Horse']['Bet Pool'] % len(self.Data['PlayerData'][pid]['Horse']['Betters'])
@@ -263,19 +263,21 @@ async def raceHorses(self,payload = None):
             toDo.append( self.Mods.emojiRule.addEmoji(self,pid, '🏆') )
             self.Data['PlayerData'][pid]['Horse']['Name'] += '🏆'
 
-    msg += "\n - 2st : "
-    for pid in score2st:
-        msg += '\n    ' + self.Data['PlayerData'][pid]['Name']+'\'s Horse: '+self.Data['PlayerData'][pid]['Horse']['Name']
-        self.Data['PlayerData'][pid]['Horse']['Victories'] = 0
+    if len(score2st) > 0:
+        msg += f"\n - 2st ({sortedScores[1]}): "
+        for pid in score2st:
+            msg += '\n    ' + self.Data['PlayerData'][pid]['Name']+'\'s Horse: '+self.Data['PlayerData'][pid]['Horse']['Name']
+            self.Data['PlayerData'][pid]['Horse']['Victories'] = 0
 
-        del self.Data['PlayerData'][pid]['Horse']['Betters']
+            del self.Data['PlayerData'][pid]['Horse']['Betters']
 
-    msg += "\n - 3st : "
-    for pid in score3st:
-        msg += '\n    ' + self.Data['PlayerData'][pid]['Name']+'\'s Horse: '+self.Data['PlayerData'][pid]['Horse']['Name']
-        self.Data['PlayerData'][pid]['Horse']['Victories'] = 0
+    if len(score3st) > 0:
+        msg += f"\n - 3st ({sortedScores[2]}): "
+        for pid in score3st:
+            msg += '\n    ' + self.Data['PlayerData'][pid]['Name']+'\'s Horse: '+self.Data['PlayerData'][pid]['Horse']['Name']
+            self.Data['PlayerData'][pid]['Horse']['Victories'] = 0
 
-        del self.Data['PlayerData'][pid]['Horse']['Betters']
+            del self.Data['PlayerData'][pid]['Horse']['Betters']
 
     
     await self.Refs['channels']['actions'].send(msg)
