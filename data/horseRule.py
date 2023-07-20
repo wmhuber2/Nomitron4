@@ -200,7 +200,7 @@ async def chooseRaceHorses(self, payload = None):
         msg = "There are not enough horses to race. *Sad Horse Noises*"
         raceHorses = []
     else: 
-        raceHorses  = list(numpy.random.choice(raceHorses, size=3, replace=False))
+        raceHorses  = numpy.random.choice(raceHorses, size=3, replace=False).tolist()
         msg = "This week's race horses are!"
     sootheBonus = [0,0,0]
     for pid in self.Data['PlayerData'].keys():
