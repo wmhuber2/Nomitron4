@@ -248,9 +248,13 @@ async def raceHorses(self,payload = None):
     msg = "Race Results In:" 
     msg += f"\n - 1st ({sortedScores[0]}): "
     for pid in score1st:
-        betReward    = self.Data['Horse']['Bet Pool'] // len(self.Data['PlayerData'][pid]['Horse']['Betters'])
-        self.Data['Horse']['Bet Pool'] = self.Data['Horse']['Bet Pool'] % len(self.Data['PlayerData'][pid]['Horse']['Betters'])
+        if len(self.Data['PlayerData'][pid]['Horse']['Betters']) != 0:
+            betReward    = self.Data['Horse']['Bet Pool'] // len(self.Data['PlayerData'][pid]['Horse']['Betters'])
+            self.Data['Horse']['Bet Pool'] = self.Data['Horse']['Bet Pool'] % len(self.Data['PlayerData'][pid]['Horse']['Betters'])
+        else:
+            betReward = 0
 
+            
         for betpid in self.Data['PlayerData'][pid]['Horse']['Betters']:
             self.Tasks.add( self.Mods.tokensRule.addTokens(self, betpid, betReward) )
         del self.Data['PlayerData'][pid]['Horse']['Betters']
