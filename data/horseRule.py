@@ -205,7 +205,7 @@ async def chooseRaceHorses(self, payload = None):
     sootheBonus = [0,0,0]
     for pid in self.Data['PlayerData'].keys():
         if pid in raceHorses:
-            msg += "\n - "+self.Data['PlayerData'][pid]['Name']+'\'s Horse: '+self.Data['PlayerData'][pid]['Horse']['Name']
+            msg += "\n- "+self.Data['PlayerData'][pid]['Name']+'\'s Horse: '+self.Data['PlayerData'][pid]['Horse']['Name']
             self.Data['PlayerData'][pid]['Horse']['Race Bonus'] = \
                 int(self.Data['PlayerData'][pid]['Horse']['Has Been Soothed'])
             self.Data['PlayerData'][pid]['Horse']['Betters'] = []
