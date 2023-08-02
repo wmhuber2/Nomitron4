@@ -145,6 +145,10 @@ async def atk(self, payload):
         await payload['raw'].channel.send('- You have already valiently attacked Glebo.')
         return 
 
+    if '☠️' in self.Data['PlayerData'][pid]['Emojis']: 
+        await payload['raw'].channel.send('- You have already slain Glebo\s Kin. You cannot commit more then one murder...yet')
+        return 
+
     
     self.Data['Glebo']['Participants'].append(payload['Author ID'])
     atkRoll = np.random.randint(1,8001,1)[0]
@@ -165,9 +169,6 @@ async def atk(self, payload):
         self.Data['Glebo']['Fighters'][payload['Author ID']] = 0
         await payload['raw'].channel.send(f"- {playerName} has floundered and missed Glebo. ({atkRoll})")
         
-
-
-
 async def defdef(self, payload):
     if '🤸' in self.Data['PlayerData'][payload['Author ID']]['Emojis']: 
         await payload['raw'].channel.send('- You cant defend Glebo, you funky human.')
@@ -181,6 +182,10 @@ async def defdef(self, payload):
     if payload['raw'].reference is None: 
         await payload['raw'].channel.send('- You must reply to an attack to defend.')
         return
+    if '☠️' in self.Data['PlayerData'][pid]['Emojis']: 
+        await payload['raw'].channel.send('- You have slain Glebo\'s kin. This Glebo doesnt trust you to defend him.')
+        return 
+
 
 
     rmid = payload['raw'].reference.message_id
