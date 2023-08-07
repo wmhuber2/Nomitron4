@@ -145,7 +145,7 @@ async def atk(self, payload):
         await payload['raw'].channel.send('- You have already valiently attacked Glebo.')
         return 
 
-    if '☠️' in self.Data['PlayerData'][pid]['Emojis']: 
+    if '☠️' in self.Data['PlayerData'][payload['Author ID']]['Emojis']: 
         await payload['raw'].channel.send('- You have already slain Glebo\s Kin. You cannot commit more then one murder...yet')
         return 
 
@@ -182,7 +182,7 @@ async def defdef(self, payload):
     if payload['raw'].reference is None: 
         await payload['raw'].channel.send('- You must reply to an attack to defend.')
         return
-    if '☠️' in self.Data['PlayerData'][pid]['Emojis']: 
+    if '☠️' in self.Data['PlayerData'][payload['Author ID']]['Emojis']: 
         await payload['raw'].channel.send('- You have slain Glebo\'s kin. This Glebo doesnt trust you to defend him.')
         return 
 
