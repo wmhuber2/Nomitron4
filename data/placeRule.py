@@ -140,7 +140,7 @@ async def fpixel(self, payload):
 
 
 
-async def plot(self)
+async def plot(self):
     plt.figure(figsize=(6,6))
     plt.axis('off')
     plt.imshow(np.asarray(self.Data['Canvas'])[:,:,:3], vmax = 1, vmin =0, origin='lower', interpolation='nearest')
