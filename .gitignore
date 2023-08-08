@@ -3,3 +3,4 @@ data/Backups
 *.secret
 DiscordBot_Data.yml
 __pycache__
+*rplace.png

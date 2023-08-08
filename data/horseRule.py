@@ -301,8 +301,8 @@ async def bet(self, payload):
     for racerpid in self.Data['Horse']['Racers']:
         if name == self.Data['PlayerData'][racerpid]['Horse']['Name']:
             if self.Data['PlayerData'].get('Horses You Bet On') is None:
-                self.Data['PlayerData']['Horses You Bet On'] = []
-            if racerpid in self.Data['PlayerData']['Horses You Bet On']:
+                self.Data['PlayerData'][pid]['Horses You Bet On'] = []
+            if racerpid in self.Data['PlayerData'][pid]['Horses You Bet On']:
                 await payload['raw'].channel.send("You already bet on this horse.")
                 return
 
@@ -312,8 +312,8 @@ async def bet(self, payload):
             else:
                 self.Data['PlayerData'][racerpid]['Horse']['Betters'].append(pid)
                 self.Data['Horse']['Bet Pool'] += 2
-                self.Data['PlayerData'][payload['Author ID']]['Friendship Tokens'] -= 2
-                self.Data['PlayerData']['Horses You Bet On'].append(racerpid)
+                self.Data['PlayerData'][pid]['Friendship Tokens'] -= 2
+                self.Data['PlayerData'][pid]['Horses You Bet On'].append(racerpid)
                 await payload['raw'].add_reaction('✔️')
                 return
     

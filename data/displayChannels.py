@@ -208,7 +208,7 @@ async def updateData(self):
                   'Suber-MSG','Votes','Mood','Array','lastAlive','NextTurnStartTime',
                   'CurrTurnStartTime','channels', 'admin','server','Emoji Recipes',
                   'Turn -3 RPS Winners','Turn -2 RPS Winners','Turn -1 RPS Winners',
-                  'Haymaker','VotingEnabled','Votes-1','Votes-2','Votes-3','Votes-4','Votes-5','Wizard']
+                  'Haymaker','VotingEnabled','Votes-1','Votes-2','Votes-3','Votes-4','Votes-5','Wizard', 'Canvas']
     paramMap = {
         'TurnTime': 'Elasped Turn Time (sec)'
     }

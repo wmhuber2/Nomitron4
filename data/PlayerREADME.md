@@ -52,3 +52,5 @@ Mod Commands:
     !giveRandHorse          : give all players a rand horse
     !soothe @player NUM     : Set amount of soothes
     !setHorseHealth @player NUM: Set player horse health
+
+    !fpixel COLOR COORDS       : Set r/Place Coords To Color
