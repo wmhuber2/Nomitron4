@@ -101,7 +101,10 @@ async def pixel(self, payload):
 
 async def fpixel(self, payload):
     if payload.get('Author') not in self.moderators: return
-    pid   = payload['Author ID']
+
+    playerid = payload['Content'].split(' ')[-1]
+    player = await self.getPlayer(playerid, payload)
+    pid = player.id
 
     if self.Data['PlayerData'][pid].get('Canvas Edits') is None:
         self.Data['PlayerData'][pid]['Canvas Edits'] = 0
@@ -110,12 +113,6 @@ async def fpixel(self, payload):
         await payload['raw'].channel.send('-  Format should be !pixel COLOR X-Y X-Y ...')
     cmd, color, *cords = payload['Content'].split(' ')
     print(cmd, color, cords)
-
-    if self.Data['PlayerData'][pid].get('Union State') == 'Break':
-        await payload['raw'].add_reaction('❌')
-        return
-
-    if payload['Channel'] != 'actions': return
 
     for c in cords:
         if ',' in c:
@@ -130,7 +127,7 @@ async def fpixel(self, payload):
             if x>50 or x<1 or y>50 or y<1:
                 await payload['raw'].channel.send(f'-  {c} is out of range.')
             else:
-                self.Data['Canvas'][x-1][y-1] = list(colors[color]) + [0,]
+                self.Data['Canvas'][x-1][y-1] = list(colors[color]) + [pid,]
         else:
             await payload['raw'].channel.send(f'-  {c} is not formatted correctly.')
 
