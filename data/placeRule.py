@@ -111,7 +111,7 @@ async def fpixel(self, payload):
 
     if len(payload['Content'].split(' ')) < 3 :
         await payload['raw'].channel.send('-  Format should be !pixel COLOR X-Y X-Y ...')
-    cmd, color, *cords = payload['Content'].split(' ')
+    cmd, color, *cords = payload['Content'].split(' ')[:-1]
     print(cmd, color, cords)
 
     for c in cords:
