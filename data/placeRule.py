@@ -89,7 +89,7 @@ async def pixel(self, payload):
             if x>50 or x<1 or y>50 or y<1:
                 await payload['raw'].channel.send(f'-  {c} is out of range.')
             else:
-                self.Data['Canvas'][x-1][y-1] = list(colors[color]) + [pid,]
+                self.Data['Canvas'][y-1][x-1] = list(colors[color]) + [pid,]
                 self.Data['PlayerData'][pid]['Canvas Edits'] += 1
         else:
             await payload['raw'].channel.send(f'-  {c} is not formatted correctly.')
@@ -127,7 +127,7 @@ async def fpixel(self, payload):
             if x>50 or x<1 or y>50 or y<1:
                 await payload['raw'].channel.send(f'-  {c} is out of range.')
             else:
-                self.Data['Canvas'][x-1][y-1] = list(colors[color]) + [pid,]
+                self.Data['Canvas'][y-1][x-1] = list(colors[color]) + [pid,]
         else:
             await payload['raw'].channel.send(f'-  {c} is not formatted correctly.')
 
