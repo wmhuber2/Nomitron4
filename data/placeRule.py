@@ -107,7 +107,7 @@ async def fpixel(self, payload):
     if player is None: pid = 0
     else: pid = player.id
 
-    if self.Data['PlayerData'][pid].get('Canvas Edits') is None:
+    if pid != 0 and self.Data['PlayerData'][pid].get('Canvas Edits') is None:
         self.Data['PlayerData'][pid]['Canvas Edits'] = 0
 
     if len(payload['Content'].split(' ')) < 3 :
