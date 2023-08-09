@@ -104,7 +104,8 @@ async def fpixel(self, payload):
 
     playerid = payload['Content'].split(' ')[-1]
     player = await self.getPlayer(playerid, payload)
-    pid = player.id
+    if player is None: pid = 0
+    else: pid = player.id
 
     if self.Data['PlayerData'][pid].get('Canvas Edits') is None:
         self.Data['PlayerData'][pid]['Canvas Edits'] = 0
