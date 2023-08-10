@@ -38,6 +38,11 @@ async def resetPixelCounter(self, payload):
         self.Data['PlayerData'][pid]['Canvas Edits'] = 0
         await payload['raw'].add_reaction('✔️')
 
+async def resetPixelCounterAll(self, payload = None):
+    if payload is not None and payload.get('Author') not in self.moderators: return
+    for pid in self.Data['PlayerData'].keys():
+        self.Data['PlayerData'][pid]['Canvas Edits'] = 0
+
 async def pixel(self, payload):
     pid   = payload['Author ID']
 

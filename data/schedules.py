@@ -149,6 +149,8 @@ async def onDayEnd(self):
     except: print('Horse Error')
     try: await self.Refs['channels']['mod-spam'].send(file=self.discord.File(self.path + self.savefile))
     except: pass
+    try: await self.Mods.placeRule.resetPixelCounterAll(self)
+    except: pass
     await self.Mods.rules.updateRules(self)
 
 async def onDayStart(self):
