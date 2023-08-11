@@ -150,6 +150,7 @@ async def plot(self):
     plt.axis('off')
     plt.imshow(np.asarray(self.Data['Canvas'])[:,:,:3], vmax = 1, vmin =0, origin='lower', interpolation='nearest')
     plt.savefig('rplace.png',dpi = 100, bbox_inches='tight')
+    plt.close()
     msg = await self.Refs['channels']['bot-spam'].send('r/Place Canvas', file=self.discord.File("rplace.png"))
 
     pidDict = {}
