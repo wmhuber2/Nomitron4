@@ -164,6 +164,7 @@ async def plot(self):
     
     for pid in pidDict.keys():
         if pid not in self.Data['PlayerData'].keys(): continue
+        self.Data['PlayerData'][pid]['Placed Pixels'] = len(pidDict[pid])
         if pidDict[pid] >= 25: await self.Mods.emojiRule.addEmoji(self, pid, '🎨' )
         else:                  await self.Mods.emojiRule.removeEmoji(self, pid, '🎨' )
     
