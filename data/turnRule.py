@@ -29,6 +29,9 @@ async def startTurn(self):
     await self.Mods.clockMarket.stonks(self)
     await self.Mods.gleboRule.spawnGlebo(self)
     await self.Mods.horseRule.spookinessCheck(self)
+    try: await self.mods.tubbyRule.tubbify(self)
+    except Exception as e:
+        print(e)
     
 
 async def incrementTurn(self):

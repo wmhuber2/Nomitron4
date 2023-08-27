@@ -45,6 +45,7 @@ Mod Commands:
     !setInvestmentLimit @player NUM : Set player Clockmarket Investment Limits
 
     !giveDI @player : Give player a Haymaker DI
+    !resetGom @ player
 
     !setGlobo NUM   : Set Glebos Health
 

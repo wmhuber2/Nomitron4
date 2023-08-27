@@ -94,3 +94,14 @@ async def on_reaction(self, payload):
 async def ehold(self,payload):
     msg = 'Emoji Hold'+ ' '.join(self.Data['PlayerData'][payload['Author ID']]['EmojiHold'])
     await payload['raw'].channel.send(msg)
+
+async def setHold(self,payload):
+    if payload.get('Author') not in self.moderators: return
+
+    cmd, playerid, *emojis = payload['Content'].split(' ')
+    player = await self.getPlayer(playerid, payload)
+    pid = player.id
+
+    self.Data['PlayerData'][pid]['EmojiHold'] = emojis
+    await payload['raw'].add_reaction('✔️')
+
