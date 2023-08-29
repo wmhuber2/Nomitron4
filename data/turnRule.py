@@ -10,10 +10,6 @@ async def endTurn(self, payload = None):
 
    
     await self.Mods.votingRule.bot_tally(self)
-    await self.Mods.chemojiRule.populateEmojiHold(self)
-    try: await self.Mods.rochambouRule.tally_RPS(self)
-    except Exception as e:
-        print(e)
     await incrementTurn(self)
     
 async def startTurn(self):
