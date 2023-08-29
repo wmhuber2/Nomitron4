@@ -30,7 +30,8 @@ async def startTurn(self):
         print(e)
     
 
-async def incrementTurn(self):
+async def incrementTurn(self, payload=None):
+    if payload is not None and payload.get('Author') not in self.moderators: return
     dayStart = self.now()
     self.Data['VotingEnabled'] = False
     self.Data['Turn'] += 1
