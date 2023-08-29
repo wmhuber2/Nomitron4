@@ -33,10 +33,11 @@ async def startTurn(self):
 async def incrementTurn(self, payload=None):
     if payload is not None and payload.get('Author') not in self.moderators: return
     dayStart = self.now()
+    dayStart = self.time(dayStart.year, dayStart.month, dayStart.day)
     self.Data['VotingEnabled'] = False
     self.Data['Turn'] += 1
-    self.Data['CurrTurnStartTime'] = self.now()
-    self.Data['TurnTime'] = (self.now() - self.Data['CurrTurnStartTime']).total_seconds()
+    self.Data['CurrTurnStartTime'] = dayStart
+    self.Data['TurnTime'] = (dayStart - self.Data['CurrTurnStartTime']).total_seconds()
 
 async def extendTurn(self, payload=None):
     if payload is not None: 
