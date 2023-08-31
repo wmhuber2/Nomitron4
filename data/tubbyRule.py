@@ -2,7 +2,7 @@ import random
 # command
 
 # turnly
-async def tubbify(self, payload):
+async def tubbify(self, payload=None):
 
     if payload is not None and payload.get('Author') not in self.moderators: return
 
